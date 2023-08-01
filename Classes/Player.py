@@ -5,10 +5,11 @@ from Controllers import SpriteController
 class Player(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
     GRAVITY = 0
-    SPRITES = SpriteController.load_sprite_sheets("RedHood", 32, 32, True)
+    SPRITES = SpriteController.load_sprite_sheets(32, 32, True)
     ANIMATION_DELAY = 5
 
     def __init__(self, x, y, width, height):
+        super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
         self.y_vel = 0
