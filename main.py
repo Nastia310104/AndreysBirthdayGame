@@ -52,7 +52,7 @@ def main(window):
 
         keys = pygame.key.get_pressed()
         player.loop(FPS)
-        PlayerController.handle_move(player, keys, PLAYER_VELOCITY)
+        PlayerController.handle_move(player, keys, PLAYER_VELOCITY, floor)
         draw(window, floor)
 
     pygame.quit()

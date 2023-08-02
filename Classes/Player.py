@@ -4,9 +4,9 @@ from Controllers import SpriteController
 
 class Player(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
-    GRAVITY = 0
+    GRAVITY = 1
     SPRITES = SpriteController.load_sprite_sheets(32, 32, True)
-    ANIMATION_DELAY = 5
+    ANIMATION_DELAY = 4
 
     def __init__(self, x, y, width, height):
         super().__init__()
@@ -60,3 +60,11 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)
 
+    def landed(self):
+        self.fall_count = 0
+        self.y_vel = 0
+        self.jump_count = 0
+
+    def hit_head(self):
+        self.count = 0
+        self.y_vel -= 1
