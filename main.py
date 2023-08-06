@@ -50,6 +50,10 @@ def main(window):
                 run = False
                 break
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and player.jump_count < 2:
+                    player.jump()
+
         keys = pygame.key.get_pressed()
         player.loop(FPS)
         PlayerController.handle_move(player, keys, PLAYER_VELOCITY, floor)

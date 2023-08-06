@@ -6,7 +6,7 @@ class Player(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
     GRAVITY = 1
     SPRITES = SpriteController.load_sprite_sheets(32, 32, True)
-    ANIMATION_DELAY = 4
+    ANIMATION_DELAY = 8
 
     def __init__(self, x, y, width, height):
         super().__init__()
@@ -17,6 +17,7 @@ class Player(pygame.sprite.Sprite):
         self.direction = "left"
         self.animation_count = 0
         self.fall_count = 0
+        self.jump_count = 0
 
     def move(self, dx, dy):
         self.rect.x += dx
@@ -34,6 +35,14 @@ class Player(pygame.sprite.Sprite):
             self.direction = "right"
             self.animation_count = 0
 
+    def jump(self):
+        self.y_vel = -self.GRAVITY * 8
+        self.animation_count = 0
+        self.jump_count += 1
+        if self.jump_count < 1:
+            self.fall_count = 0
+            
+
     def loop(self, fps):
         self.move(self.x_vel, self.y_vel)
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
@@ -45,9 +54,15 @@ class Player(pygame.sprite.Sprite):
         window.blit(self.sprite, (self.rect.x, self.rect.y))
 
     def update_sprite(self):
-        sprite_sheet = "stand"
-        if self.x_vel != 0:
+        sprite_sheet = "idle"
+        if self.y_vel < 0:
+            if self.jump_count <= 2:
+                sprite_sheet = "jump"
+        elif self.y_vel > self.GRAVITY * 2:
+            sprite_sheet = "fall"
+        elif self.x_vel != 0:
             sprite_sheet = "run"
+
 
         sprite_sheet_name = sprite_sheet + "_" + self.direction
         sprites = self.SPRITES[sprite_sheet_name]
@@ -68,3 +83,4 @@ class Player(pygame.sprite.Sprite):
     def hit_head(self):
         self.count = 0
         self.y_vel -= 1
+
