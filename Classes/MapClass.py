@@ -11,10 +11,16 @@ class TileMap():
         self.start_x = 0
         self.start_y = 0
         self.tiles = self.load_tiles(filename)
+        self.map_surface = pygame.Surface((self.map_width, self.map_height))
+        self.map_surface.set_colorkey((0, 0, 0))
+        self.load_map()
 
-    def load_map(self, window):
+    def draw_map(self, window, camera):
+        window.blit(self.map_surface, (0 - camera.offset.x, 0 - camera.offset.y))
+
+    def load_map(self):
         for tile in self.tiles:
-            tile.draw(window)
+            tile.draw(self.map_surface)
 
     def read_csv(self, filename):
         map = []

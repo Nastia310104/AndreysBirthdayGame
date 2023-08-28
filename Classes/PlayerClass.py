@@ -18,9 +18,10 @@ class Player(pygame.sprite.Sprite):
         self.animation_count = 0
         self.rect = pygame.Rect(self.START_POSITION_X, self.START_POSITION_Y, self.CHARACTER_WIDTH, self.CHARACTER_HEIGHT)
         self.direction = "right"
+        self.ground_y = 500
 
-    def draw(self, display):
-        display.blit(self.sprite, (self.rect.x, self.rect.y))
+    def draw(self, window, camera):
+        window.blit(self.sprite, (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y))
 
     def move(self, dt, tiles):
         self.horizontal_movement(dt)
