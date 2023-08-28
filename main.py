@@ -1,49 +1,36 @@
-import os
-import random
-import math
 import pygame
 import sys
 sys.path += ["Classes", "Controllers"]
 
-from Classes import Player, Block, Object
-from Controllers import PlayerController
+from Classes.MapClass import TileMap
+from Classes.PlayerClass import Player
+import Controllers.SpriteController as Sprite
 
 pygame.init()
 pygame.display.set_caption("Andrei's Crusade")
 
-BACKGROUND_LAYER_1 = pygame.transform.scale(pygame.image.load("Assets/Background/background_layer_1.png"), (960, 540))
-BACKGROUND_LAYER_2 = pygame.transform.scale(pygame.image.load("Assets/Background/background_layer_2.png"), (960, 540))
-BACKGROUND_LAYER_3 = pygame.transform.scale(pygame.image.load("Assets/Background/background_layer_3.png"), (960, 540))
-WIDTH, HEIGHT = 960, 540
+WIDTH, HEIGHT = 1800, 1000
 FPS = 60
-PLAYER_VELOCITY = 5
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
+canvas = pygame.Surface((WIDTH, HEIGHT))
 
-block_size = 48
-
-player = Player.Player(100, 100, 50, 50)
-floor = [Block.Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH // block_size, (WIDTH * 2) // block_size)]
-
-def draw(window, objects):
-    window.blit(BACKGROUND_LAYER_1, (0, 0))
-    window.blit(BACKGROUND_LAYER_2, (0, 0))
-    window.blit(BACKGROUND_LAYER_3, (0, 0))
-
-    for object in objects:
-        object.draw(window)
-
+def draw(window, player, offset_x, map):
+    Sprite.parallax_background(window, WIDTH, HEIGHT, offset_x)
+    map.load_map(window)
     player.draw(window)
-
     pygame.display.update()
 
 def main(window):
     clock = pygame.time.Clock()
+    player = Player()
+    map = TileMap('level_1_mainMap.csv')
 
+    offset_x = 0
 
     run = True
     while run:
-        clock.tick(FPS)
+        delta_time = clock.tick(FPS) * .001 * FPS
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -51,13 +38,37 @@ def main(window):
                 break
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and player.jump_count < 2:
-                    player.jump()
+                player.animation_count = 0
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    player.go_left = True
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    player.go_right = True
+                elif event.key == pygame.K_SPACE:
+                    if player.jump_count < 2:
+                        player.jump()
 
-        keys = pygame.key.get_pressed()
-        player.loop(FPS)
-        PlayerController.handle_move(player, keys, PLAYER_VELOCITY, floor)
-        draw(window, floor)
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    player.go_left = False
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    player.go_right = False
+                elif event.key == pygame.K_SPACE:
+                    if player.is_jumping:
+                        player.velocity.y *= .25
+                        player.is_jumping = False
+
+        player.loop(delta_time, map.tiles)
+        
+        draw(window, player, offset_x, map)
+
+
+        # if player.rect.x > PLAYER_START_POSITION + scroll_area_width:
+        # if ((player.rect.right - offset_x >= WIDTH - 200) and player.velocity.x > 0) or (
+        #     (player.rect.left - offset_x <= 200) and player.velocity.x < 0):
+        #         offset_x += player.velocity.x
+        # elif ((player.rect.top - offset_y >= HEIGHT - scroll_area_height)) or ((player.rect.bottom - offset_y <= scroll_area_height )):
+        #         offset_y += 10
 
     pygame.quit()
     quit()
