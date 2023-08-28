@@ -2,11 +2,22 @@ import pygame
 from os import listdir
 from os.path import isfile, join
 
+PLAYER_SPRITE_PATH = "Assets/RedHood"
+TILESET_PATH = "Assets/OakWood/oak_woods_tileset.png"
+
+BACKGROUND_IMAGES_NUMBER = 5
+BACKGROUND_PATH = "Assets/Background/CityBackgrounds/"
+
+#TODO: Change when levels and mode added 
+LEVEL_NUMBER = "1/"
+MODE = "Night/"
+LEVEL_LENGTH = 10
+
 def flip(sprites):
     return [pygame.transform.flip(sprite, True, False) for sprite in sprites]
 
-def load_sprite_sheets(width, height, direction=False):
-    path = join("Assets", "RedHood")
+def load_character(width, height, direction=False):
+    path = join(PLAYER_SPRITE_PATH)
     images = [f for f in listdir(path) if isfile(join(path, f))]
 
     all_sprites = {}
@@ -30,9 +41,27 @@ def load_sprite_sheets(width, height, direction=False):
     return all_sprites
 
 def load_block(size):
-     path = join("Assets", "OakWood", "oak_woods_tileset.png")
-     image = pygame.image.load(path).convert_alpha()
-     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
-     rect = pygame.Rect(24, 0, size, size)
-     surface.blit(image, (0, 0), rect)
-     return pygame.transform.scale2x(surface)
+    path = join(TILESET_PATH)
+    image = pygame.image.load(path).convert_alpha()
+    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
+    rect = pygame.Rect(24, 0, size, size)
+    surface.blit(image, (0, 0), rect)
+
+    return pygame.transform.scale2x(surface)
+
+def load_background(width, height):
+    bg_images = []
+
+    for i in range(1, BACKGROUND_IMAGES_NUMBER):
+        bg_image = pygame.transform.scale(pygame.image.load(BACKGROUND_PATH + LEVEL_NUMBER + MODE + str(i) + ".png"), (width, height))
+        bg_images.append(bg_image)
+
+    return bg_images
+
+def parallax_background(window, width, height, offset_x):
+    bg_images = load_background(width, height)
+    for i in range(LEVEL_LENGTH):
+        paralax_speed = 1
+        for image in bg_images:
+            window.blit(image, (((i * width) - offset_x * paralax_speed), 0))
+            paralax_speed += 0.2
