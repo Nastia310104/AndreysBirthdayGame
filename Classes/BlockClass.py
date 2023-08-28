@@ -1,5 +1,4 @@
 from Classes import ObjectClass
-from Controllers import SpriteController
 import pygame
 
 class Block(ObjectClass.Object):
@@ -9,5 +8,3 @@ class Block(ObjectClass.Object):
         self.rect.x = x
         self.rect.y = y
         
-    # def draw(self, window):
-    #     window.blit(self.image, (self.rect.x, self.rect.y))

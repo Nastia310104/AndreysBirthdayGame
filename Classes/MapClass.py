@@ -1,8 +1,9 @@
 import pygame, csv, os
 from Classes.BlockClass import Block
+from Classes.GrassClass import Grass
 
 GAP = 64
-TILESET_PATH = "Assets/1 Tiles/"
+TILESET_PATH = "Assets/Tiles/"
 TILE_NAME = "Tile_"
 
 class TileMap():
@@ -38,9 +39,11 @@ class TileMap():
         for row in map:
             x = 0
             for tile in row:
-                if int(tile) > 64 and int(tile) <= 64+9:
+                if int(tile) == 131:
+                    tiles.append(Grass((TILESET_PATH + TILE_NAME + str(int(tile) - GAP) + '.png'), x * self.tile_size, y * self.tile_size))
+                elif int(tile) > GAP and int(tile) <= GAP+9:
                     tiles.append(Block((TILESET_PATH + TILE_NAME + '0' + str(int(tile) - GAP) + '.png'), x * self.tile_size, y * self.tile_size))
-                elif int(tile) > 64 + 9:
+                elif int(tile) > GAP + 9:
                     tiles.append(Block((TILESET_PATH + TILE_NAME + str(int(tile) - GAP) + '.png'), x * self.tile_size, y * self.tile_size))
                 x += 1
             y += 1
