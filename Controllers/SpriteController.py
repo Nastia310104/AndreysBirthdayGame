@@ -29,7 +29,7 @@ def load_character(width, height, direction=False):
         for i in range(sprite_sheet.get_width() // width):
                 surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)
                 rect = pygame.Rect(i * width, 0, width, height)
-                surface.blit(sprite_sheet, (0 ,0), rect)
+                surface.blit(sprite_sheet, (0, 0), rect)
                 sprites.append(pygame.transform.scale2x(surface))
 
         if direction:
@@ -56,3 +56,31 @@ def parallax_background(window, width, height, offset_x):
         for image in bg_images:
             window.blit(image, (((i * width) - offset_x * paralax_speed), 0))
             paralax_speed += 0.07
+
+
+# SPRITES_PATH = "Assets/RedHood2/"
+
+
+# def flip(sprite):
+#     return pygame.transform.flip(sprite, True, False)
+
+# def load_character(direction=False):
+#     path = join(SPRITES_PATH)
+#     images = [file for file in listdir(path) if isfile(join(path, file))]
+#     images.sort()
+
+#     all_sprites = {}
+
+#     for image in images:
+#         sprite = pygame.transform.scale2x(pygame.image.load(SPRITES_PATH + image))
+
+
+#         if direction:
+#             all_sprites[image.replace(".png", "") + "_right"] = sprite
+#             all_sprites[image.replace(".png", "") + "_left"] = pygame.transform.flip(sprite, True, False)
+#         else:
+#             all_sprites[image.replace(".png", "")] = sprite
+
+#     # print(all_sprites)
+
+#     return all_sprites

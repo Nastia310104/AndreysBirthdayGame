@@ -15,9 +15,12 @@ app = tkinter.Tk()
 WIDTH, HEIGHT = app.winfo_screenwidth(), app.winfo_screenheight()
 FPS = 60
 
+LEVEL_1_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/level_1_mainObjects.csv']
+LEVEL_1_TEST_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/test_level_1_mainObjects.csv']
+
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
-def draw(window, player, offset_x, map, camera):
+def draw(window, player, map, camera):
     Sprite.parallax_background(window, WIDTH, HEIGHT, camera.offset.x)
     map.draw_map(window, camera)
     player.draw(window, camera)
@@ -27,18 +30,15 @@ def draw(window, player, offset_x, map, camera):
 def main(window):
     clock = pygame.time.Clock()
     player = Player()
-    map = TileMap('level_1_mainMap.csv')
-    camera = Camera.Camera(player, WIDTH, HEIGHT)
-    follow = Camera.Follow(camera, player)
-    camera.setmethod(follow)
+    map = TileMap(LEVEL_1_TEST_MAPS[0], LEVEL_1_TEST_MAPS[1])
+
+    objects = map.tiles + map.objects
 
     camera = Camera.Camera(player, WIDTH, HEIGHT, map)
     follow = Camera.Follow(camera, player)
     auto = Camera.Auto(camera, player, camera.offset.y)
 
     camera.setmethod(follow)
-
-    offset_x = 0
 
     run = True
     while run:
@@ -73,10 +73,10 @@ def main(window):
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     camera.setmethod(follow)
 
-        player.loop(delta_time, map.tiles)
+        player.loop(delta_time, objects)
         camera.scroll()
 
-        draw(window, player, offset_x, map, camera)
+        draw(window, player, map, camera)
 
     pygame.quit()
     quit()

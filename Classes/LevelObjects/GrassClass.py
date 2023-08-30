@@ -3,6 +3,7 @@ import pygame
 
 class Grass(ObjectClass.Object):
     def __init__(self, image, x, y):
+        super().__init__(x, y)
         self.image = pygame.transform.flip(
                         pygame.transform.scale2x(
                             pygame.image.load(image)), 
@@ -10,5 +11,4 @@ class Grass(ObjectClass.Object):
                         True)
         self.rect = self.image.get_rect()
         self.rect.x = x
-        self.rect.y = y
-        
+        self.rect.y = y - 2
