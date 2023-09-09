@@ -11,7 +11,6 @@ TILE_NAME = "Tile_"
 OBJECTS_PATH = "Assets/MainObjects/"
 OBJECT_NAME = "Object_"
 
-
 class TileMap():
     def __init__(self, filename, objects_filename):
         self.tile_size = 64
@@ -25,12 +24,11 @@ class TileMap():
 
     def draw_map(self, window, camera):
         window.blit(self.map_surface, (0 - camera.offset.x, 0 - camera.offset.y))
+        GEAR_GROUP.update(camera.offset.x, camera.offset.y)
+        GEAR_GROUP.draw(window)
 
     def load_map(self):
         BLOCK_GROUP.draw(self.map_surface)
-        # for object in self.objects and not isinstance(object, Gear):
-        #     object.draw(self.map_surface)
-        GEAR_GROUP.draw(self.map_surface)
 
     def read_csv(self, filename):
         map = []
@@ -72,11 +70,10 @@ class TileMap():
                 elif int(object) == 1:
                     objects.append(Chest(x * 64, y * 64, self.map_surface))
                 elif int(object) == 2:
-                    gear = Gear(x * 64, y * 64, self.map_surface)
+                    gear = Gear(x * 64, y * 64)
                     objects.append(gear)
                 elif int(object) > 2:
                     objects.append(Block((OBJECTS_PATH + OBJECT_NAME + str(object) + '.png'), x * 64, y * 64))
                 x += 1
             y += 1
-
         return objects

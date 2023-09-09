@@ -3,6 +3,7 @@ import Controllers.SpriteController as Sprite
 from Classes.LevelObjects.ChestClass import Chest
 from Classes.LevelObjects.GearClass import Gear
 from Classes.LevelObjects.NoticeClass import Notice
+from Classes.MapClass import TileMap
 
 from MapClass import BLOCK_GROUP
 
@@ -100,6 +101,8 @@ class Player(pygame.sprite.Sprite):
                     if not tile.is_opened:
                         tile.openChest()
                 elif isinstance(tile, Gear):
+                    # print(tile.id)
+                    # TileMap.removeObject(tile.id)
                     if not tile.is_collected:
                         self.gears += 1
                         print("gears: ", self.gears)
@@ -108,7 +111,6 @@ class Player(pygame.sprite.Sprite):
                         print("notice: ", self.gears)
                 else:
                     hits.append(tile)
-                    tile.update()
 
         return hits
 
