@@ -1,8 +1,10 @@
 from Classes import ObjectClass
 import pygame
 
-OBJECT_PATH = 'Assets/MainObjects/Object_1.png'
+OBJECT_PATH = 'Assets/LevelObjects/Object_1.png'
 WIDTH, HEIGHT = 32, 32
+
+CHEST_GROUP = pygame.sprite.Group()
 
 class Chest(ObjectClass.Object):
     ANIMATION_DELAY = 6
@@ -16,6 +18,7 @@ class Chest(ObjectClass.Object):
         self.rect.y = y + 2
         self.window = window
         self.is_opened = False
+        CHEST_GROUP.add(self)
 
     def loadSprites(self):
         spriteSheet = pygame.image.load(OBJECT_PATH)
@@ -27,14 +30,12 @@ class Chest(ObjectClass.Object):
             surface.blit(spriteSheet, (0, 0), rect)
             sprites.append(pygame.transform.scale2x(surface))
 
-        sprites.append(pygame.transform.scale2x(pygame.image.load("Assets/MainObjects/Object_4.png")))
-
         self.sprites = sprites
         self.image = self.sprites[self.animation_count]
     
     def openChest(self):
         index = (self.animation_count // self.ANIMATION_DELAY) % len(self.sprites)
-        if index == 4:
+        if index == 3:
             self.is_opened = True
 
         self.image = self.sprites[index]

@@ -1,17 +1,20 @@
+# TODO: Recount camera's offset
+# TODO: Recount camera's down scroll
+
 import pygame
 from abc import abstractmethod, ABC
 
 vector = pygame.math.Vector2
 
 SCROLL_DOWN_LIMIT = 300
-# TODO: Recount camera's offset
+
 class Camera:
     def __init__(self, player, width, height, map):
         self.player = player
         self.offset = vector(0, 0)
         self.offset_float = vector(0, 0)
         self.display_width, self.display_height = width, height
-        self.CONST = vector(-self.player.START_POSITION_X + player.rect.w / 2, -self.player.START_POSITION_Y + 100)
+        self.CONST = vector(-self.player.START_POSITION_X + (player.rect.w / 2) - 400, -self.player.START_POSITION_Y + 150)
         self.map = map
 
     def setmethod(self, method):

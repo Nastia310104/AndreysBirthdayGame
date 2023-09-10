@@ -1,6 +1,4 @@
 import pygame
-from abc import abstractmethod, ABC
-
 
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, width=64, height=64, name=None):

@@ -3,9 +3,6 @@ import Controllers.SpriteController as Sprite
 from Classes.LevelObjects.ChestClass import Chest
 from Classes.LevelObjects.GearClass import Gear
 from Classes.LevelObjects.NoticeClass import Notice
-from Classes.MapClass import TileMap
-
-from MapClass import BLOCK_GROUP
 
 class Player(pygame.sprite.Sprite):
     CHARACTER_WIDTH, CHARACTER_HEIGHT = 32, 32
@@ -19,6 +16,7 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.go_left, self.go_right = False, False
         self.is_jumping, self.on_ground = False, False
+        self.isDead = False
         self.gravity, self.friction = .35, -.12
         self.position = pygame.math.Vector2(self.START_POSITION_X, self.START_POSITION_Y)
         self.velocity = pygame.math.Vector2(0,0)
@@ -27,11 +25,9 @@ class Player(pygame.sprite.Sprite):
         self.animation_count = 0
         self.rect = pygame.Rect(self.START_POSITION_X, self.START_POSITION_Y, self.CHARACTER_WIDTH * 2, self.CHARACTER_HEIGHT * 2)
         self.direction = "right"
-#  TODO: Add counters for Gears, Bullets, Health
-        self.health = 100
-        self.isDead = False
-        self.notices = 0
 
+        self.health = 100
+        self.notices = 0
         self.gears = 0
         self.have_gun = False
         self.have_screwdriver = False
@@ -101,14 +97,15 @@ class Player(pygame.sprite.Sprite):
                     if not tile.is_opened:
                         tile.openChest()
                 elif isinstance(tile, Gear):
-                    # print(tile.id)
-                    # TileMap.removeObject(tile.id)
                     if not tile.is_collected:
                         self.gears += 1
                         print("gears: ", self.gears)
-                        tile.collectGear()
+                        tile.collect()
                 elif isinstance(tile, Notice):
-                        print("notice: ", self.gears)
+                    if not tile.is_collected:
+                        self.notices += 1
+                        tile.collect()
+                        print("notice: ", self.notices)
                 else:
                     hits.append(tile)
 

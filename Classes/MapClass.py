@@ -1,14 +1,13 @@
 import pygame, csv, os, array
 from Classes.BlockClass import Block, BLOCK_GROUP
-from Classes.LevelObjects.GrassClass import Grass
-from Classes.LevelObjects.ChestClass import Chest
+from Classes.LevelObjects.ChestClass import Chest, CHEST_GROUP
 from Classes.LevelObjects.GearClass import Gear, GEAR_GROUP
-from Classes.LevelObjects.NoticeClass import Notice
+from Classes.LevelObjects.NoticeClass import Notice, NOTICE_GROUP
 
 GAP = 64
 TILESET_PATH = "Assets/Tiles/"
 TILE_NAME = "Tile_"
-OBJECTS_PATH = "Assets/MainObjects/"
+OBJECTS_PATH = "Assets/LevelObjects/"
 OBJECT_NAME = "Object_"
 
 class TileMap():
@@ -24,11 +23,13 @@ class TileMap():
 
     def draw_map(self, window, camera):
         window.blit(self.map_surface, (0 - camera.offset.x, 0 - camera.offset.y))
-        GEAR_GROUP.update(camera.offset.x, camera.offset.y)
-        GEAR_GROUP.draw(window)
+        for object in (GEAR_GROUP.sprites() + NOTICE_GROUP.sprites()):
+            object.update_image()
+            window.blit(object.image, (object.rect.x - camera.offset.x, object.rect.y - camera.offset.y))
 
     def load_map(self):
         BLOCK_GROUP.draw(self.map_surface)
+        CHEST_GROUP.draw(self.map_surface)
 
     def read_csv(self, filename):
         map = []
@@ -66,12 +67,11 @@ class TileMap():
             x = 0
             for object in row:
                 if int(object) == 0:
-                    objects.append(Notice(x * 64, y * 64, self.map_surface))
+                    objects.append(Notice(x * 64, y * 64))
                 elif int(object) == 1:
                     objects.append(Chest(x * 64, y * 64, self.map_surface))
                 elif int(object) == 2:
-                    gear = Gear(x * 64, y * 64)
-                    objects.append(gear)
+                    objects.append(Gear(x * 64, y * 64))
                 elif int(object) > 2:
                     objects.append(Block((OBJECTS_PATH + OBJECT_NAME + str(object) + '.png'), x * 64, y * 64))
                 x += 1
