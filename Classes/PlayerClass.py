@@ -1,8 +1,9 @@
 import pygame
 import Controllers.SpriteController as Sprite
 from Classes.LevelObjects.ChestClass import Chest
-from Classes.LevelObjects.GearClass import Gear
-from Classes.LevelObjects.NoticeClass import Notice
+from Classes.EnemyClass import Enemy
+from Classes.BlockClass import Block
+from Classes.HealthBarClass import HealthBar
 
 class Player(pygame.sprite.Sprite):
     CHARACTER_WIDTH, CHARACTER_HEIGHT = 32, 32
@@ -29,11 +30,15 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.notices = 0
         self.gears = 0
+        self.batteries = 0
+        self.keys = 0
         self.have_gun = False
         self.have_screwdriver = False
+        self.health_bar = HealthBar(200, 50)
     
     def draw(self, window, camera):
         window.blit(self.sprite, (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y))
+        self.health_bar.draw(window)
 
     def limit_velocity(self, max_vel):
         self.velocity.x = max(-max_vel, min(self.velocity.x, max_vel))
@@ -96,20 +101,18 @@ class Player(pygame.sprite.Sprite):
                 if isinstance(tile, Chest):
                     if not tile.is_opened:
                         tile.openChest()
-                elif isinstance(tile, Gear):
-                    if not tile.is_collected:
-                        self.gears += 1
-                        print("gears: ", self.gears)
-                        tile.collect()
-                elif isinstance(tile, Notice):
-                    if not tile.is_collected:
-                        self.notices += 1
-                        tile.collect()
-                        print("notice: ", self.notices)
-                else:
+                elif isinstance(tile, Block):
                     hits.append(tile)
+                elif isinstance (tile, Enemy):
+                    self.health_bar.decreaseHealth()
+                else:
+                    self.collectObject(tile)
 
         return hits
+    
+    def collectObject(self, object):
+        if not object.is_collected:
+            object.collect(self)
 
     def checkCollisionsx(self, tiles):
         collisions = self.get_hits(tiles)

@@ -16,7 +16,6 @@ class Gear(ObjectClass.Object):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.is_collected = False
         GEAR_GROUP.add(self)
 
     def loadSprites(self):
@@ -30,12 +29,12 @@ class Gear(ObjectClass.Object):
             sprites.append(pygame.transform.scale_by(surface, 1.3))
 
         self.sprites = sprites
-        self.update_image()
+        self.updateImage()
 
-    def collect(self):
-        self.is_collected = True
-        self.kill()
-
-    def update_image(self):
+    def updateImage(self):
         self.image = self.sprites[(self.animation_count // self.ANIMATION_DELAY) % len(self.sprites)]
         self.animation_count += 1
+
+    def collect(self, player):
+        player.gears += 1        
+        return super().collect()

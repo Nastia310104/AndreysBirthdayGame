@@ -7,8 +7,7 @@ from Classes.MapClass import TileMap
 from Classes.PlayerClass import Player
 import Controllers.SpriteController as Sprite
 import Classes.CameraClass as Camera
-from Classes.HealthBarClass import HealthBar
-
+ 
 
 pygame.init()
 pygame.display.set_caption("Andrei's Crusade")
@@ -17,32 +16,27 @@ app = tkinter.Tk()
 WIDTH, HEIGHT = app.winfo_screenwidth(), app.winfo_screenheight()
 FPS = 60
 
-LEVEL_1_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/level_1_mainObjects.csv']
-LEVEL_1_TEST_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/test_level_1_mainObjects.csv']
+LEVEL_1_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/level_1_mainObjects.csv', 'Levels/Level_1/level_1_enemies.csv']
+LEVEL_1_TEST_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/test_level_1_mainObjects.csv', 'Levels/Level_1/level_1_enemies.csv']
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
-def draw(window, player, map, camera, health_bar):
+def draw(window, player, map, camera):
     Sprite.parallax_background(window, WIDTH, HEIGHT, camera.offset.x)
-    map.draw_map(window, camera)
+    map.drawMap(window, camera)
     player.draw(window, camera)
-    health_bar.draw(window)
-
     pygame.display.update()
 
 def main(window):
     clock = pygame.time.Clock()
     player = Player()
-    map = TileMap(LEVEL_1_TEST_MAPS[0], LEVEL_1_TEST_MAPS[1])
-    health_bar = HealthBar(200, 50)
-
-    objects = map.tiles + map.objects
+    map = TileMap(LEVEL_1_TEST_MAPS)
 
     camera = Camera.Camera(player, WIDTH, HEIGHT, map)
     follow = Camera.Follow(camera, player)
     auto = Camera.Auto(camera, player, camera.offset.y)
 
-    camera.setmethod(follow)
+    camera.setMethod(follow)
 
     run = True
     while run:
@@ -77,10 +71,10 @@ def main(window):
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     camera.setmethod(follow)
 
-        player.loop(delta_time, objects)
+        player.loop(delta_time, map.tiles)
         camera.scroll()
 
-        draw(window, player, map, camera, health_bar)
+        draw(window, player, map, camera)
 
     pygame.quit()
     quit()

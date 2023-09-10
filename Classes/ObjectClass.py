@@ -8,6 +8,14 @@ class Object(pygame.sprite.Sprite):
         self.wigth = width
         self.height = height
         self.name = name
+        self.is_collected = False
 
     def draw(self, window):
         window.blit(self.image, (self.rect.x, self.rect.y))
+
+    def collect(self):
+        self.is_collected = True
+        self.kill()
+
+    def updateImage(self):
+        return

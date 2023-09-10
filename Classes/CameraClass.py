@@ -17,7 +17,7 @@ class Camera:
         self.CONST = vector(-self.player.START_POSITION_X + (player.rect.w / 2) - 400, -self.player.START_POSITION_Y + 150)
         self.map = map
 
-    def setmethod(self, method):
+    def setMethod(self, method):
         self.method = method
 
     def scroll(self):
