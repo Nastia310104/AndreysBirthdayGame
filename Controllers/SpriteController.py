@@ -2,9 +2,6 @@ import pygame
 from os import listdir
 from os.path import isfile, join
 
-PLAYER_SPRITE_PATH = "Assets/RedHood"
-TILESET_PATH = "Assets/OakWood/oak_woods_tileset.png"
-
 BACKGROUND_IMAGES_NUMBER = 5
 BACKGROUND_PATH = "Assets/Background/CityBackgrounds/"
 
@@ -16,8 +13,8 @@ LEVEL_LENGTH = 10
 def flip(sprites):
     return [pygame.transform.flip(sprite, True, False) for sprite in sprites]
 
-def load_character(width, height, direction=False):
-    path = join(PLAYER_SPRITE_PATH)
+def loadSprites(path, width, height, direction=False):
+    path = join(path)
     images = [f for f in listdir(path) if isfile(join(path, f))]
 
     all_sprites = {}

@@ -1,15 +1,113 @@
 import pygame
-from Classes import ObjectClass
+from Classes.ObjectClass import Object
+import Controllers.SpriteController as Sprite
 
-OBJECT_PATH = 'Assets/LevelObjects/Object_4.png'
+ENEMY_SPRITE_PATH = 'Assets/NPSs/Slime/'
 
 ENEMY_GROUP = pygame.sprite.Group()
 
-class Enemy(ObjectClass.Object):
+class Enemy(Object):
+    ANIMATION_DELAY = 4
+    VELOCITY = 4
+    VISION_LENGTH = 192
+    WIDTH, HEIGHT = 32, 25
+
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.image = pygame.transform.scale2x(pygame.image.load(OBJECT_PATH))
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.sprites = Sprite.loadSprites(ENEMY_SPRITE_PATH, self.WIDTH, self.HEIGHT, True)
+        self.rect = pygame.Rect(x, y + 14, self.WIDTH * 2, self.HEIGHT * 2)
+        self.vision = pygame.Rect(x - self.VISION_LENGTH, (y + 14 - self.VISION_LENGTH), self.VISION_LENGTH, self.HEIGHT * 2)
+# Enemy's conditions
+        self.direction = "right"
+        self.is_attacking = False
+        self.is_dead = False
+# Enemy's counters
+        self.dieing_count = 0
+        self.animation_count = 0
+        self.attack_counter = 0
         ENEMY_GROUP.add(self)
+
+    def loop(self, tiles, player):
+        if self.is_dead == False:
+            self.move(tiles)
+            self.checkPlayerCollision(player)
+            self.updateImage()
+        else:
+            self.die()
+
+    def die(self):
+        if self.dieing_count == 30:
+            self.kill()
+        self.image = self.sprites['blow_' + self.direction][(self.dieing_count // int(self.ANIMATION_DELAY * 1.5)) % 5]
+        self.dieing_count += 1
+
+########################### Handle movement ###########################
+
+    def move(self, tiles):
+        self.handleMovement()
+        self.checkCollisionsx(tiles)
+
+    def handleMovement(self):
+        if self.direction == "right":
+            self.velocity_x = self.VELOCITY
+            self.rect.x += self.velocity_x
+            self.vision.x = self.rect.x + 64
+            self.vision.y = self.rect.y
+        elif self.direction == "left":
+            self.velocity_x = -self.VELOCITY
+            self.rect.x += self.velocity_x
+            self.vision.x = self.rect.x - self.VISION_LENGTH
+            self.vision.y = self.rect.y
+
+    def moveLeft(self):
+        self.direction = "left"
+        self.animation_count = 0
+
+    def moveRight(self):
+        self.direction = "right"
+        self.animation_count = 0
+
+########################### Check collisions ###########################
+
+    def getHits(self, tiles):
+        hits = []
+        for tile in tiles:
+            if self.rect.colliderect(tile):
+                hits.append(tile)
+        return hits
+
+    def checkCollisionsx(self, tiles):
+        collisions = self.getHits(tiles)
+        for tile in collisions:
+            if self.velocity_x > 0:
+                self.direction = "left"
+            elif self.velocity_x < 0:
+                self.direction = "right"
+
+    def checkPlayerCollision(self, player):
+        if self.vision.colliderect(player):
+            self.is_attacking = True
+            self.VELOCITY = 8
+        elif self.attack_counter == 0:
+            self.attack_counter = 20
+            self.is_attacking = False
+            self.VELOCITY = 4
+
+########################### Draw enemy ###########################
+
+    def updateImage(self):
+        if self.is_attacking == True:
+            self.spritesheet = 'attack'
+        else:
+            self.spritesheet = 'walk'
+
+        spritesheet_name = self.spritesheet + "_" + self.direction
+        sprites = self.sprites[spritesheet_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        self.attack_counter -= 1
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+
+    def draw(self, window, camera):
+        window.blit(self.image, (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y))
