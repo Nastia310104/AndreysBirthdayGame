@@ -29,7 +29,7 @@ def load_character(width, height, direction=False):
         for i in range(sprite_sheet.get_width() // width):
                 surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)
                 rect = pygame.Rect(i * width, 0, width, height)
-                surface.blit(sprite_sheet, (0 ,0), rect)
+                surface.blit(sprite_sheet, (0, 0), rect)
                 sprites.append(pygame.transform.scale2x(surface))
 
         if direction:
@@ -39,15 +39,6 @@ def load_character(width, height, direction=False):
             all_sprites[image.replace(".png", "")] = sprites
 
     return all_sprites
-
-def load_block(size):
-    path = join(TILESET_PATH)
-    image = pygame.image.load(path).convert_alpha()
-    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
-    rect = pygame.Rect(24, 0, size, size)
-    surface.blit(image, (0, 0), rect)
-
-    return pygame.transform.scale2x(surface)
 
 def load_background(width, height):
     bg_images = []
@@ -64,4 +55,4 @@ def parallax_background(window, width, height, offset_x):
         paralax_speed = 1
         for image in bg_images:
             window.blit(image, (((i * width) - offset_x * paralax_speed), 0))
-            paralax_speed += 0.2
+            paralax_speed += 0.07

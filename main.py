@@ -1,39 +1,42 @@
 import pygame
 import sys
 sys.path += ["Classes", "Controllers"]
+import tkinter
 
 from Classes.MapClass import TileMap
 from Classes.PlayerClass import Player
 import Controllers.SpriteController as Sprite
 import Classes.CameraClass as Camera
+ 
 
 pygame.init()
 pygame.display.set_caption("Andrei's Crusade")
+app = tkinter.Tk()
 
-WIDTH, HEIGHT = 1800, 1000
+WIDTH, HEIGHT = app.winfo_screenwidth(), app.winfo_screenheight()
 FPS = 60
 
+LEVEL_1_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/level_1_mainObjects.csv', 'Levels/Level_1/level_1_enemies.csv']
+LEVEL_1_TEST_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/test_level_1_mainObjects.csv', 'Levels/Level_1/level_1_enemies.csv']
+
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-canvas = pygame.Surface((WIDTH, HEIGHT))
 
-def draw(window, player, offset_x, map, camera):
-    Sprite.parallax_background(window, WIDTH, HEIGHT, offset_x)
-    map.draw_map(window, camera)
+def draw(window, player, map, camera):
+    Sprite.parallax_background(window, WIDTH, HEIGHT, camera.offset.x)
+    map.drawMap(window, camera)
     player.draw(window, camera)
-    # window.blit(player.sprite, (player.rect.x - camera.offset.x, player.rect.y - camera.offset.y))
-    # window.blit(canvas, (0, 0))
-
     pygame.display.update()
 
 def main(window):
     clock = pygame.time.Clock()
     player = Player()
-    map = TileMap('level_1_mainMap.csv')
-    camera = Camera.Camera(player, WIDTH, HEIGHT)
-    follow = Camera.Follow(camera, player)
-    camera.setmethod(follow)
+    map = TileMap(LEVEL_1_TEST_MAPS)
 
-    offset_x = 0
+    camera = Camera.Camera(player, WIDTH, HEIGHT, map)
+    follow = Camera.Follow(camera, player)
+    auto = Camera.Auto(camera, player, camera.offset.y)
+
+    camera.setMethod(follow)
 
     run = True
     while run:
@@ -53,7 +56,8 @@ def main(window):
                 elif event.key == pygame.K_SPACE:
                     if player.jump_count < 2:
                         player.jump()
-
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    camera.setmethod(auto)
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
@@ -64,19 +68,13 @@ def main(window):
                     if player.is_jumping:
                         player.velocity.y *= .25
                         player.is_jumping = False
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    camera.setmethod(follow)
 
         player.loop(delta_time, map.tiles)
         camera.scroll()
-        
-        draw(window, player, offset_x, map, camera)
 
-
-        # if player.rect.x > PLAYER_START_POSITION + scroll_area_width:
-        # if ((player.rect.right - offset_x >= WIDTH - 200) and player.velocity.x > 0) or (
-        #     (player.rect.left - offset_x <= 200) and player.velocity.x < 0):
-        #         offset_x += player.velocity.x
-        # elif ((player.rect.top - offset_y >= HEIGHT - scroll_area_height)) or ((player.rect.bottom - offset_y <= scroll_area_height )):
-        #         offset_y += 10
+        draw(window, player, map, camera)
 
     pygame.quit()
     quit()

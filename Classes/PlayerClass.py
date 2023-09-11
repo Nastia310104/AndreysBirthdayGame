@@ -1,27 +1,56 @@
 import pygame
 import Controllers.SpriteController as Sprite
+from Classes.LevelObjects.ChestClass import Chest
+from Classes.EnemyClass import Enemy
+from Classes.BlockClass import Block
+from Classes.HealthBarClass import HealthBar
 
 class Player(pygame.sprite.Sprite):
     CHARACTER_WIDTH, CHARACTER_HEIGHT = 32, 32
     SPRITES = Sprite.load_character(CHARACTER_WIDTH, CHARACTER_HEIGHT, True)
     START_POSITION_X, START_POSITION_Y = 200, 800
-    ANIMATION_DELAY = 8
+    ANIMATION_DELAY = 4
+
+    # TODO:Mask collision
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.go_left, self.go_right = False, False
         self.is_jumping, self.on_ground = False, False
+        self.isDead = False
         self.gravity, self.friction = .35, -.12
-        self.position, self.velocity = pygame.math.Vector2(self.START_POSITION_X, self.START_POSITION_Y), pygame.math.Vector2(0,0)
+        self.position = pygame.math.Vector2(self.START_POSITION_X, self.START_POSITION_Y)
+        self.velocity = pygame.math.Vector2(0,0)
         self.acceleration = pygame.math.Vector2(0,self.gravity)
         self.jump_count = 0
         self.animation_count = 0
-        self.rect = pygame.Rect(self.START_POSITION_X, self.START_POSITION_Y, self.CHARACTER_WIDTH, self.CHARACTER_HEIGHT)
+        self.rect = pygame.Rect(self.START_POSITION_X, self.START_POSITION_Y, self.CHARACTER_WIDTH * 2, self.CHARACTER_HEIGHT * 2)
         self.direction = "right"
-        self.ground_y = 500
 
+        self.health = 100
+        self.notices = 0
+        self.gears = 0
+        self.batteries = 0
+        self.keys = 0
+        self.have_gun = False
+        self.have_screwdriver = False
+        self.health_bar = HealthBar(200, 50)
+    
     def draw(self, window, camera):
         window.blit(self.sprite, (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y))
+        self.health_bar.draw(window)
+
+    def limit_velocity(self, max_vel):
+        self.velocity.x = max(-max_vel, min(self.velocity.x, max_vel))
+
+        if abs(self.velocity.x) < .01:
+            self.velocity.x = 0
+
+    def loop(self, dt, tiles):
+        self.move(dt, tiles)
+        self.update_sprite()
+
+########################### Handle movement ###########################
 
     def move(self, dt, tiles):
         self.horizontal_movement(dt)
@@ -29,7 +58,7 @@ class Player(pygame.sprite.Sprite):
         self.vertical_movement(dt)
         self.checkCollisionsy(tiles)
 
-    def horizontal_movement(self,dt):
+    def horizontal_movement(self, dt):
         self.acceleration.x = 0
         if self.go_left:
             self.acceleration.x -= .3
@@ -43,15 +72,16 @@ class Player(pygame.sprite.Sprite):
         self.position.x += self.velocity.x * dt + (self.acceleration.x * .5) * (dt * dt)
         self.rect.x = self.position.x
 
-    def vertical_movement(self,dt):
+    def vertical_movement(self, dt):
         self.velocity.y += self.acceleration.y * dt
-        if self.velocity.y > 7: self.velocity.y = 7
+
+        if self.velocity.y > 7:
+            self.velocity.y = 7
+
         self.position.y += self.velocity.y * dt + (self.acceleration.y * .5) * (dt * dt)
         self.rect.bottom = self.position.y
 
-    def limit_velocity(self, max_vel):
-        self.velocity.x = max(-max_vel, min(self.velocity.x, max_vel))
-        if abs(self.velocity.x) < .01: self.velocity.x = 0
+########################### Handle jumping ###########################
 
     def jump(self):
         self.animation_count = 0
@@ -62,21 +92,35 @@ class Player(pygame.sprite.Sprite):
         self.on_ground = False
         self.jump_count += 1
 
+########################### Check collision ###########################
+
     def get_hits(self, tiles):
         hits = []
         for tile in tiles:
             if self.rect.colliderect(tile):
-                hits.append(tile)
+                if isinstance(tile, Chest):
+                    if not tile.is_opened:
+                        tile.openChest()
+                elif isinstance(tile, Block):
+                    hits.append(tile)
+                elif isinstance (tile, Enemy):
+                    self.health_bar.decreaseHealth()
+                else:
+                    self.collectObject(tile)
 
         return hits
+    
+    def collectObject(self, object):
+        if not object.is_collected:
+            object.collect(self)
 
     def checkCollisionsx(self, tiles):
         collisions = self.get_hits(tiles)
         for tile in collisions:
-            if self.velocity.x > 0:  
+            if self.velocity.x > 0:
                 self.position.x = tile.rect.left - self.rect.w
                 self.rect.x = self.position.x
-            elif self.velocity.x < 0: 
+            elif self.velocity.x < 0:
                 self.position.x = tile.rect.right
                 self.rect.x = self.position.x
 
@@ -97,9 +141,8 @@ class Player(pygame.sprite.Sprite):
                 self.position.y = tile.rect.bottom + self.rect.h
                 self.rect.bottom = self.position.y
 
-    def loop(self, dt, tiles):
-        self.move(dt, tiles)
-        self.update_sprite()
+
+########################### Animate character ###########################
 
     def update_sprite(self):
         self.spritesheet = "idle"
@@ -110,7 +153,7 @@ class Player(pygame.sprite.Sprite):
             self.spritesheet = "fall"
         elif self.go_left or self.go_right:
             self.spritesheet = "run"
-
+            
         sprite_sheet_name = self.spritesheet + "_" + self.direction
         sprites = self.SPRITES[sprite_sheet_name]
         sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
@@ -118,4 +161,3 @@ class Player(pygame.sprite.Sprite):
         self.animation_count += 1
 
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
-        self.mask = pygame.mask.from_surface(self.sprite)
