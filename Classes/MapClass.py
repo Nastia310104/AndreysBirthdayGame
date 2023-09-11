@@ -18,7 +18,9 @@ class TileMap():
         self.tile_size = 64
         self.start_x = 0
         self.start_y = 0
-        self.tiles = self.loadMap(filenames)
+        self.tiles = self.loadTiles(filenames[0])
+        self.objects = self.loadObjects(filenames[1])
+        self.enemies = self.loadNps(filenames[2])
         self.map_surface = pygame.Surface((self.map_width, self.map_height))
         self.map_surface.set_colorkey((0, 0, 0))
         self.fillMap()
@@ -31,7 +33,6 @@ class TileMap():
 
     def fillMap(self):
         BLOCK_GROUP.draw(self.map_surface)
-        ENEMY_GROUP.draw(self.map_surface)
 
     def readCsv(self, filename):
         map = []

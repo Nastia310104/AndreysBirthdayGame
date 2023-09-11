@@ -7,6 +7,7 @@ from Classes.MapClass import TileMap
 from Classes.PlayerClass import Player
 import Controllers.SpriteController as Sprite
 import Classes.CameraClass as Camera
+from Classes.EnemyClass import Enemy, ENEMY_GROUP
  
 
 pygame.init()
@@ -25,6 +26,9 @@ def draw(window, player, map, camera):
     Sprite.parallax_background(window, WIDTH, HEIGHT, camera.offset.x)
     map.drawMap(window, camera)
     player.draw(window, camera)
+    for enemy in ENEMY_GROUP.sprites():
+        enemy.draw(window, camera)
+
     pygame.display.update()
 
 def main(window):
@@ -37,6 +41,8 @@ def main(window):
     auto = Camera.Auto(camera, player, camera.offset.y)
 
     camera.setMethod(follow)
+
+    level_objects = map.tiles + map.objects + map.enemies
 
     run = True
     while run:
@@ -57,7 +63,7 @@ def main(window):
                     if player.jump_count < 2:
                         player.jump()
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    camera.setmethod(auto)
+                    camera.setMethod(auto)
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
@@ -69,10 +75,13 @@ def main(window):
                         player.velocity.y *= .25
                         player.is_jumping = False
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    camera.setmethod(follow)
+                    camera.setMethod(follow)
 
-        player.loop(delta_time, map.tiles)
+        player.loop(delta_time, level_objects)
         camera.scroll()
+
+        for enemy in ENEMY_GROUP.sprites():
+            enemy.loop(map.tiles, player)
 
         draw(window, player, map, camera)
 

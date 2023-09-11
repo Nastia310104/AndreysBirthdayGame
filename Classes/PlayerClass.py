@@ -5,9 +5,11 @@ from Classes.EnemyClass import Enemy
 from Classes.BlockClass import Block
 from Classes.HealthBarClass import HealthBar
 
+PLAYER_SPRITE_PATH = "Assets/RedHood"
+
 class Player(pygame.sprite.Sprite):
     CHARACTER_WIDTH, CHARACTER_HEIGHT = 32, 32
-    SPRITES = Sprite.load_character(CHARACTER_WIDTH, CHARACTER_HEIGHT, True)
+    SPRITES = Sprite.loadSprites(PLAYER_SPRITE_PATH, CHARACTER_WIDTH, CHARACTER_HEIGHT, True)
     START_POSITION_X, START_POSITION_Y = 200, 800
     ANIMATION_DELAY = 4
 
@@ -105,6 +107,7 @@ class Player(pygame.sprite.Sprite):
                     hits.append(tile)
                 elif isinstance (tile, Enemy):
                     self.health_bar.decreaseHealth()
+                    tile.is_dead = True
                 else:
                     self.collectObject(tile)
 
@@ -154,10 +157,9 @@ class Player(pygame.sprite.Sprite):
         elif self.go_left or self.go_right:
             self.spritesheet = "run"
             
-        sprite_sheet_name = self.spritesheet + "_" + self.direction
-        sprites = self.SPRITES[sprite_sheet_name]
+        spritesheet_name = self.spritesheet + "_" + self.direction
+        sprites = self.SPRITES[spritesheet_name]
         sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
         self.sprite = sprites[sprite_index]
         self.animation_count += 1
-
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))

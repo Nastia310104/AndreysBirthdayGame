@@ -19,13 +19,13 @@ class Notice(ObjectClass.Object):
         NOTICE_GROUP.add(self)
 
     def loadSprites(self):
-        spriteSheet = pygame.image.load(OBJECT_PATH)
+        spritesheet = pygame.image.load(OBJECT_PATH)
         
         sprites = []
-        for i in range(spriteSheet.get_width() // WIDTH):
+        for i in range(spritesheet.get_width() // WIDTH):
             surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA, 32)
             rect = pygame.Rect(i * WIDTH, 0, WIDTH, HEIGHT)
-            surface.blit(spriteSheet, (0, 0), rect)
+            surface.blit(spritesheet, (0, 0), rect)
             sprites.append(pygame.transform.scale_by(surface, 2.6))
 
         self.sprites = sprites
