@@ -6,6 +6,7 @@ BACKGROUND_IMAGES_NUMBER = 5
 BACKGROUND_PATH = "Assets/Background/CityBackgrounds/"
 
 #TODO: Change when levels and mode added 
+# TODO: Change slime=False when enemy added
 LEVEL_NUMBER = "1/"
 MODE = "Night/"
 LEVEL_LENGTH = 10
@@ -13,7 +14,7 @@ LEVEL_LENGTH = 10
 def flip(sprites):
     return [pygame.transform.flip(sprite, True, False) for sprite in sprites]
 
-def loadSprites(path, width, height, direction=False):
+def loadSprites(path, width, height, direction=False, slime=False):
     path = join(path)
     images = [f for f in listdir(path) if isfile(join(path, f))]
 
@@ -32,6 +33,9 @@ def loadSprites(path, width, height, direction=False):
         if direction:
             all_sprites[image.replace(".png", "") + "_right"] = sprites
             all_sprites[image.replace(".png", "") + "_left"] = flip(sprites)
+        elif slime:
+            all_sprites[image.replace(".png", "") + "_left"] = sprites
+            all_sprites[image.replace(".png", "") + "_right"] = flip(sprites)
         else:
             all_sprites[image.replace(".png", "")] = sprites
 

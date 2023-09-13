@@ -3,7 +3,8 @@ import Controllers.SpriteController as Sprite
 from Classes.LevelObjects.ChestClass import Chest
 from Classes.EnemyClass import Enemy
 from Classes.BlockClass import Block
-from Classes.HealthBarClass import HealthBar
+from Classes.ChargeBarClass import ChargeBar
+from Classes.LevelObjects.GunClass import GUN_GROUP
 
 PLAYER_SPRITE_PATH = "Assets/RedHood"
 
@@ -19,28 +20,32 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.go_left, self.go_right = False, False
         self.is_jumping, self.on_ground = False, False
-        self.isDead = False
+        self.is_dead = False
+        self.is_attack = False
         self.gravity, self.friction = .35, -.12
         self.position = pygame.math.Vector2(self.START_POSITION_X, self.START_POSITION_Y)
         self.velocity = pygame.math.Vector2(0,0)
         self.acceleration = pygame.math.Vector2(0,self.gravity)
         self.jump_count = 0
         self.animation_count = 0
+        self.attack_count = 0
         self.rect = pygame.Rect(self.START_POSITION_X, self.START_POSITION_Y, self.CHARACTER_WIDTH * 2, self.CHARACTER_HEIGHT * 2)
         self.direction = "right"
 
         self.health = 100
         self.notices = 0
         self.gears = 0
-        self.batteries = 0
         self.keys = 0
         self.have_gun = False
         self.have_screwdriver = False
-        self.health_bar = HealthBar(200, 50)
+        self.health_bar = ChargeBar(200, 50, 80, 0)
     
     def draw(self, window, camera):
         window.blit(self.sprite, (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y))
         self.health_bar.draw(window)
+        if self.have_gun:
+            self.gun.draw(window)
+            self.gun.power_bar.draw(window)
 
     def limit_velocity(self, max_vel):
         self.velocity.x = max(-max_vel, min(self.velocity.x, max_vel))
@@ -50,6 +55,7 @@ class Player(pygame.sprite.Sprite):
 
     def loop(self, dt, tiles):
         self.move(dt, tiles)
+        self.handleAttack()
         self.update_sprite()
 
 ########################### Handle movement ###########################
@@ -94,10 +100,27 @@ class Player(pygame.sprite.Sprite):
         self.on_ground = False
         self.jump_count += 1
 
+########################### Handle attack ###########################
+    def handleAttack(self):
+        if self.is_attack == True:
+            if self.attack_count >= 30:
+                self.is_attack = False
+                self.attack_count = 0
+            elif self.attack_count < 30:
+                self.attack_count += 1
+
+    def attack(self):
+        if self.have_gun == True and self.gun.power > 0 and self.gun.cooldown == 0:
+            self.is_attack = True
+            self.animation_count = 0
+            self.gun.shoot(self)
+
 ########################### Check collision ###########################
 
     def get_hits(self, tiles):
         hits = []
+        if len(GUN_GROUP.sprites()) > 0:
+            tiles += GUN_GROUP.sprites()
         for tile in tiles:
             if self.rect.colliderect(tile):
                 if isinstance(tile, Chest):
@@ -105,9 +128,8 @@ class Player(pygame.sprite.Sprite):
                         tile.openChest()
                 elif isinstance(tile, Block):
                     hits.append(tile)
-                elif isinstance (tile, Enemy):
-                    self.health_bar.decreaseHealth()
-                    tile.is_dead = True
+                elif isinstance (tile, Enemy) and not tile.is_dead:
+                    self.health_bar.decreaseCharge()
                 else:
                     self.collectObject(tile)
 
@@ -144,12 +166,13 @@ class Player(pygame.sprite.Sprite):
                 self.position.y = tile.rect.bottom + self.rect.h
                 self.rect.bottom = self.position.y
 
-
 ########################### Animate character ###########################
 
     def update_sprite(self):
         self.spritesheet = "idle"
-        if self.velocity.y < 0:
+        if self.is_attack:
+            self.spritesheet = "attack"
+        elif self.velocity.y < 0:
             if self.jump_count <= 2:
                 self.spritesheet = "jump"
         elif self.velocity.y > self.gravity * 2:

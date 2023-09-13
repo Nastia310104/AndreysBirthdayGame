@@ -20,7 +20,7 @@ class Battery(ObjectClass.Object):
         self.image = pygame.transform.scale_by((pygame.image.load(IMAGE_PATH + str(self.animation_count) + '.png')), 2)
         self.animation_count += 1
 
-# TODO: Change when gun added
     def collect(self, player):
-        player.batteries += 1        
+        if player.have_gun:
+            player.gun.collectBattery()
         return super().collect()
