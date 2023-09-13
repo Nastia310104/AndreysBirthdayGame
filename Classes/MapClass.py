@@ -3,15 +3,18 @@ from Classes.BlockClass import Block, BLOCK_GROUP
 from Classes.LevelObjects.ChestClass import Chest, CHEST_GROUP
 from Classes.LevelObjects.GearClass import Gear, GEAR_GROUP
 from Classes.LevelObjects.NoticeClass import Notice, NOTICE_GROUP
-from Classes.EnemyClass import Enemy, ENEMY_GROUP
+from Classes.EnemyClass import Enemy
 from Classes.LevelObjects.BatteryClass import Battery, BATTERY_GROUP
 from Classes.LevelObjects.KeyClass import Key, KEY_GROUP
+from Classes.LevelObjects.GunClass import GUN_GROUP
+from Classes.LevelObjects.ScrewdriverClass import SCREWDRIVER_GROUP
 
 GAP = 64
 TILESET_PATH = "Assets/Tiles/"
 TILE_NAME = "Tile_"
 OBJECTS_PATH = "Assets/LevelObjects/"
 OBJECT_NAME = "Object_"
+FIRST_LEVEL_CHEST_CONTENT = ['gun', 'screwdriver']
 
 class TileMap():
     def __init__(self, filenames):
@@ -27,7 +30,7 @@ class TileMap():
 
     def drawMap(self, window, camera):
         window.blit(self.map_surface, (0 - camera.offset.x, 0 - camera.offset.y))
-        for object in (GEAR_GROUP.sprites() + NOTICE_GROUP.sprites() + BATTERY_GROUP.sprites() + KEY_GROUP.sprites() + CHEST_GROUP.sprites()):
+        for object in (GEAR_GROUP.sprites() + NOTICE_GROUP.sprites() + BATTERY_GROUP.sprites() + KEY_GROUP.sprites() + CHEST_GROUP.sprites() + GUN_GROUP.sprites() + SCREWDRIVER_GROUP.sprites()):
             object.updateImage()
             window.blit(object.image, (object.rect.x - camera.offset.x, object.rect.y - camera.offset.y))
 
@@ -69,12 +72,15 @@ class TileMap():
         objects = []
         object_map = self.readCsv(object_filename)
         y = 0
+        i = 0
         for row in object_map:
             x = 0
             for object in row:
                 match int(object):
                     case 0: objects.append(Notice(x * 64, y * 64))
-                    case 1: objects.append(Chest(x * 64, y * 64))
+                    case 1: 
+                        objects.append(Chest(x * 64, y * 64, FIRST_LEVEL_CHEST_CONTENT[i]))
+                        i += 1
                     case 2: objects.append(Gear(x * 64, y * 64))
                     case 3: objects.append(Key(x * 64, y * 64))
                     case 5: objects.append(Battery(x * 64, y * 64))

@@ -8,6 +8,7 @@ from Classes.PlayerClass import Player
 import Controllers.SpriteController as Sprite
 import Classes.CameraClass as Camera
 from Classes.EnemyClass import Enemy, ENEMY_GROUP
+from Classes.LevelObjects.BulletClass import BULLET_GROUP
  
 
 pygame.init()
@@ -26,8 +27,12 @@ def draw(window, player, map, camera):
     Sprite.parallax_background(window, WIDTH, HEIGHT, camera.offset.x)
     map.drawMap(window, camera)
     player.draw(window, camera)
+    
     for enemy in ENEMY_GROUP.sprites():
         enemy.draw(window, camera)
+    for bullet in BULLET_GROUP.sprites():
+        bullet.draw(window, camera)
+
 
     pygame.display.update()
 
@@ -59,18 +64,20 @@ def main(window):
                     player.go_left = True
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     player.go_right = True
-                elif event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_UP or event.key == pygame.K_w:
                     if player.jump_count < 2:
                         player.jump()
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     camera.setMethod(auto)
+                elif event.key == pygame.K_SPACE and player.is_attack == False:
+                    player.attack()
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     player.go_left = False
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     player.go_right = False
-                elif event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_UP or event.key == pygame.K_w:
                     if player.is_jumping:
                         player.velocity.y *= .25
                         player.is_jumping = False
@@ -82,6 +89,9 @@ def main(window):
 
         for enemy in ENEMY_GROUP.sprites():
             enemy.loop(map.tiles, player)
+
+        for bullet in BULLET_GROUP.sprites():
+            bullet.loop(map.tiles)
 
         draw(window, player, map, camera)
 

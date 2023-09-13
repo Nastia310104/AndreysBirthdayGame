@@ -1,6 +1,7 @@
 import pygame
 from Classes.ObjectClass import Object
 import Controllers.SpriteController as Sprite
+from Classes.LevelObjects.BulletClass import Bullet, BULLET_GROUP
 
 ENEMY_SPRITE_PATH = 'Assets/NPSs/Slime/'
 
@@ -10,16 +11,16 @@ class Enemy(Object):
     ANIMATION_DELAY = 4
     VELOCITY = 4
     VISION_LENGTH = 192
-    WIDTH, HEIGHT = 32, 25
+    WIDTH, HEIGHT = 32, 24
 
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.sprites = Sprite.loadSprites(ENEMY_SPRITE_PATH, self.WIDTH, self.HEIGHT, True)
-        self.rect = pygame.Rect(x, y + 14, self.WIDTH * 2, self.HEIGHT * 2)
-        self.vision = pygame.Rect(x - self.VISION_LENGTH, (y + 14 - self.VISION_LENGTH), self.VISION_LENGTH, self.HEIGHT * 2)
+        self.sprites = Sprite.loadSprites(ENEMY_SPRITE_PATH, self.WIDTH, self.HEIGHT, False, True)
+        self.rect = pygame.Rect(x, y + 16, self.WIDTH * 2, self.HEIGHT * 2)
+        self.vision = pygame.Rect(x - self.VISION_LENGTH, (y + 16 - self.VISION_LENGTH), self.VISION_LENGTH, self.HEIGHT * 2)
 # Enemy's conditions
         self.direction = "right"
-        self.is_attacking = False
+        self.is_attack = False
         self.is_dead = False
 # Enemy's counters
         self.dieing_count = 0
@@ -31,6 +32,7 @@ class Enemy(Object):
         if self.is_dead == False:
             self.move(tiles)
             self.checkPlayerCollision(player)
+            self.checkBulletCollision()
             self.updateImage()
         else:
             self.die()
@@ -86,17 +88,25 @@ class Enemy(Object):
 
     def checkPlayerCollision(self, player):
         if self.vision.colliderect(player):
-            self.is_attacking = True
-            self.VELOCITY = 8
-        elif self.attack_counter == 0:
-            self.attack_counter = 20
-            self.is_attacking = False
+            if self.is_attack == False:
+                self.animation_count = 0
+                self.is_attack = True
+                self.VELOCITY = 10
+        elif self.attack_counter <= 0:
+            self.attack_counter = 30
+            self.is_attack = False
             self.VELOCITY = 4
+    
+    def checkBulletCollision(self):
+        for bullet in BULLET_GROUP.sprites():
+            if self.rect.colliderect(bullet):
+                self.is_dead = True
+                bullet.kill()
 
 ########################### Draw enemy ###########################
 
     def updateImage(self):
-        if self.is_attacking == True:
+        if self.is_attack == True:
             self.spritesheet = 'attack'
         else:
             self.spritesheet = 'walk'
