@@ -1,7 +1,11 @@
 import pygame
 import sys
-sys.path += ["Classes", "Controllers"]
 import tkinter
+
+pygame.init()
+pygame.font.init()
+
+sys.path += ["Classes", "Controllers"]
 
 from Classes.MapClass import TileMap
 from Classes.PlayerClass import Player
@@ -9,9 +13,8 @@ import Controllers.SpriteController as Sprite
 import Classes.CameraClass as Camera
 from Classes.EnemyClass import Enemy, ENEMY_GROUP
 from Classes.LevelObjects.BulletClass import BULLET_GROUP
+from Classes.PortraitClass import Portrait
  
-
-pygame.init()
 pygame.display.set_caption("Andrei's Crusade")
 app = tkinter.Tk()
 
@@ -23,16 +26,17 @@ LEVEL_1_TEST_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/test_
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
-def draw(window, player, map, camera):
+def draw(window, player, map, camera, portrait):
     Sprite.parallax_background(window, WIDTH, HEIGHT, camera.offset.x)
     map.drawMap(window, camera)
-    player.draw(window, camera)
     
     for enemy in ENEMY_GROUP.sprites():
         enemy.draw(window, camera)
     for bullet in BULLET_GROUP.sprites():
         bullet.draw(window, camera)
-
+        
+    portrait.draw(window, player)
+    player.draw(window, camera)
 
     pygame.display.update()
 
@@ -40,6 +44,7 @@ def main(window):
     clock = pygame.time.Clock()
     player = Player()
     map = TileMap(LEVEL_1_TEST_MAPS)
+    portrait = Portrait(75, 0)
 
     camera = Camera.Camera(player, WIDTH, HEIGHT, map)
     follow = Camera.Follow(camera, player)
@@ -93,7 +98,7 @@ def main(window):
         for bullet in BULLET_GROUP.sprites():
             bullet.loop(map.tiles)
 
-        draw(window, player, map, camera)
+        draw(window, player, map, camera, portrait)
 
     pygame.quit()
     quit()

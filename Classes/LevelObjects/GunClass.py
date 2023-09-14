@@ -17,7 +17,7 @@ class Gun(ObjectClass.Object):
         self.is_collected = False
         self.power = 1
         self.cooldown = 0
-        self.power_bar = ChargeBar(200, 135, 16, 3)
+        self.power_bar = ChargeBar(200, 78, 16, 3)
 
     def collect(self, player):
         player.gun = self
@@ -26,7 +26,7 @@ class Gun(ObjectClass.Object):
     
     def draw(self, window):
         if self.cooldown > 0: self.cooldown -= 1
-        window.blit(pygame.transform.scale_by(self.image, 3), (100, 150))
+        window.blit(pygame.transform.scale_by(self.image, 1.8), (375, 98))
 
     def collectBattery(self):
         self.power_bar.increaseCharge()
