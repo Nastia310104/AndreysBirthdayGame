@@ -1,10 +1,11 @@
 import pygame
 import Controllers.SpriteController as Sprite
 from Classes.LevelObjects.ChestClass import Chest
+from Classes.LevelObjects.GunClass import GUN_GROUP
+from Classes.LevelObjects.ScrewdriverClass import SCREWDRIVER_GROUP
+from Classes.ChargeBarClass import ChargeBar
 from Classes.EnemyClass import Enemy
 from Classes.BlockClass import Block
-from Classes.ChargeBarClass import ChargeBar
-from Classes.LevelObjects.GunClass import GUN_GROUP
 
 PLAYER_SPRITE_PATH = "Assets/RedHood"
 
@@ -18,27 +19,30 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+# Player's statments
+        self.have_gun = False
+        self.have_screwdriver = False
         self.go_left, self.go_right = False, False
         self.is_jumping, self.on_ground = False, False
         self.is_dead = False
         self.is_attack = False
-        self.gravity, self.friction = .35, -.12
-        self.position = pygame.math.Vector2(self.START_POSITION_X, self.START_POSITION_Y)
-        self.velocity = pygame.math.Vector2(0,0)
-        self.acceleration = pygame.math.Vector2(0,self.gravity)
+# Player's counters
         self.jump_count = 0
         self.animation_count = 0
         self.attack_count = 0
-        self.rect = pygame.Rect(self.START_POSITION_X, self.START_POSITION_Y, self.CHARACTER_WIDTH * 2, self.CHARACTER_HEIGHT * 2)
-        self.direction = "right"
-
         self.health = 100
-        self.notices = 0
-        self.gears = 0
-        self.keys = 0
-        self.have_gun = False
-        self.have_screwdriver = False
-        self.health_bar = ChargeBar(200, 50, 80, 0)
+        self.notices = []
+        self.gears = []
+        self.keys = []
+# Player's position
+        self.rect = pygame.Rect(self.START_POSITION_X, self.START_POSITION_Y, self.CHARACTER_WIDTH * 2, self.CHARACTER_HEIGHT * 2)
+        self.position = pygame.math.Vector2(self.START_POSITION_X, self.START_POSITION_Y)
+        self.velocity = pygame.math.Vector2(0,0)
+        self.gravity, self.friction = .35, -.12
+        self.acceleration = pygame.math.Vector2(0,self.gravity)
+# Player's properties
+        self.direction = "right"
+        self.health_bar = ChargeBar(200, 50, 80, 0, True)
     
     def draw(self, window, camera):
         window.blit(self.sprite, (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y))
@@ -49,7 +53,6 @@ class Player(pygame.sprite.Sprite):
 
     def limit_velocity(self, max_vel):
         self.velocity.x = max(-max_vel, min(self.velocity.x, max_vel))
-
         if abs(self.velocity.x) < .01:
             self.velocity.x = 0
 
@@ -82,10 +85,8 @@ class Player(pygame.sprite.Sprite):
 
     def vertical_movement(self, dt):
         self.velocity.y += self.acceleration.y * dt
-
         if self.velocity.y > 7:
             self.velocity.y = 7
-
         self.position.y += self.velocity.y * dt + (self.acceleration.y * .5) * (dt * dt)
         self.rect.bottom = self.position.y
 
@@ -101,6 +102,7 @@ class Player(pygame.sprite.Sprite):
         self.jump_count += 1
 
 ########################### Handle attack ###########################
+
     def handleAttack(self):
         if self.is_attack == True:
             if self.attack_count >= 30:
@@ -119,8 +121,7 @@ class Player(pygame.sprite.Sprite):
 
     def get_hits(self, tiles):
         hits = []
-        if len(GUN_GROUP.sprites()) > 0:
-            tiles += GUN_GROUP.sprites()
+        tiles += (GUN_GROUP.sprites() + SCREWDRIVER_GROUP.sprites())
         for tile in tiles:
             if self.rect.colliderect(tile):
                 if isinstance(tile, Chest):
@@ -128,8 +129,9 @@ class Player(pygame.sprite.Sprite):
                         tile.openChest()
                 elif isinstance(tile, Block):
                     hits.append(tile)
-                elif isinstance (tile, Enemy) and not tile.is_dead:
-                    self.health_bar.decreaseCharge()
+                elif isinstance (tile, Enemy):
+                    if not tile.is_dead:
+                        self.health_bar.decreaseCharge()
                 else:
                     self.collectObject(tile)
 
@@ -169,7 +171,7 @@ class Player(pygame.sprite.Sprite):
 ########################### Animate character ###########################
 
     def update_sprite(self):
-        self.spritesheet = "idle"
+        self.ANIMATION_DELAY = 4
         if self.is_attack:
             self.spritesheet = "attack"
         elif self.velocity.y < 0:
@@ -179,6 +181,9 @@ class Player(pygame.sprite.Sprite):
             self.spritesheet = "fall"
         elif self.go_left or self.go_right:
             self.spritesheet = "run"
+        else:
+            self.spritesheet = "idle"
+            self.ANIMATION_DELAY = 8
             
         spritesheet_name = self.spritesheet + "_" + self.direction
         sprites = self.SPRITES[spritesheet_name]

@@ -4,8 +4,9 @@ OBJECT_PATH = 'Assets/MainObjects/bars.png'
 WIDTH, HEIGHT = 48, 16
 
 class ChargeBar(pygame.sprite.Sprite):
-    def __init__(self, x, y, image_start_y, bar_index):
+    def __init__(self, x, y, image_start_y, bar_index, flip=False):
         super().__init__()
+        self.flip = flip
         self.bar_index = bar_index
         self.loadSprites(image_start_y)
         self.rect = self.image.get_rect()
@@ -37,4 +38,5 @@ class ChargeBar(pygame.sprite.Sprite):
         self.updateImage()
 
     def updateImage(self):
-        self.image = self.sprites[self.bar_index]
+        if self.flip: self.image = pygame.transform.flip(self.sprites[self.bar_index], False, True)
+        else: self.image = self.sprites[self.bar_index]

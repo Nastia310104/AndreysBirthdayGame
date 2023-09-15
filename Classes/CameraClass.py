@@ -8,7 +8,7 @@ vector = pygame.math.Vector2
 
 SCROLL_DOWN_LIMIT = 300
 
-class Camera:
+class Camera():
     def __init__(self, player, width, height, map):
         self.player = player
         self.offset = vector(0, 0)
