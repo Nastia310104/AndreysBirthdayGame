@@ -28,6 +28,8 @@ class Player(pygame.sprite.Sprite):
         self.is_attack = False
 # Player's counters
         self.jump_count = 0
+        self.dieing_count = 0
+        self.injured_time_count = 0
         self.animation_count = 0
         self.attack_count = 0
         self.health = 100
@@ -57,9 +59,22 @@ class Player(pygame.sprite.Sprite):
             self.velocity.x = 0
 
     def loop(self, dt, tiles):
-        self.move(dt, tiles)
-        self.handleAttack()
-        self.update_sprite()
+        if not self.is_dead:
+            self.checkHealth()
+            self.move(dt, tiles)
+            self.handleAttack()
+            self.updateSprite()
+        else:
+            self.die()
+
+    def die(self):
+        if self.dieing_count <= 30:
+            self.updateSprite()
+            self.dieing_count += 1
+
+    def checkHealth(self):
+        if self.health == 0:
+            self.is_dead = True
 
 ########################### Handle movement ###########################
 
@@ -131,7 +146,11 @@ class Player(pygame.sprite.Sprite):
                     hits.append(tile)
                 elif isinstance (tile, Enemy):
                     if not tile.is_dead:
-                        self.health_bar.decreaseCharge()
+                        if self.injured_time_count <= 0:
+                            self.injured_time_count = 30
+                            self.health_bar.decreaseCharge()
+                            self.health -= 25
+                        self.injured_time_count -= 1
                 else:
                     self.collectObject(tile)
 
@@ -170,9 +189,12 @@ class Player(pygame.sprite.Sprite):
 
 ########################### Animate character ###########################
 
-    def update_sprite(self):
+    def updateSprite(self):
         self.ANIMATION_DELAY = 4
-        if self.is_attack:
+        if self.is_dead:
+            self.spritesheet = "die"
+            self.ANIMATION_DELAY = 8
+        elif self.is_attack:
             self.spritesheet = "attack"
         elif self.velocity.y < 0:
             if self.jump_count <= 2:
