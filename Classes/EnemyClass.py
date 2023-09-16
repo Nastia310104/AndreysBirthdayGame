@@ -87,7 +87,7 @@ class Enemy(Object):
                 self.direction = "right"
 
     def checkPlayerCollision(self, player):
-        if self.vision.colliderect(player):
+        if self.vision.colliderect(player) and not player.is_dead:
             if self.is_attack == False:
                 self.animation_count = 0
                 self.is_attack = True
