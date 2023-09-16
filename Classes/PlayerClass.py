@@ -6,6 +6,7 @@ from Classes.LevelObjects.ScrewdriverClass import SCREWDRIVER_GROUP
 from Classes.ChargeBarClass import ChargeBar
 from Classes.EnemyClass import Enemy
 from Classes.BlockClass import Block
+from Classes.LevelObjects.DoorClass import Door
 
 PLAYER_SPRITE_PATH = "Assets/RedHood"
 
@@ -142,6 +143,10 @@ class Player(pygame.sprite.Sprite):
                 if isinstance(tile, Chest):
                     if not tile.is_opened:
                         tile.openChest()
+                elif isinstance(tile, Door):
+                    if not tile.is_opened:
+                        hits.append(tile)
+                        tile.checkKey(self)
                 elif isinstance(tile, Block):
                     hits.append(tile)
                 elif isinstance (tile, Enemy):

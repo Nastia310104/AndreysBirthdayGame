@@ -1,4 +1,4 @@
-import pygame, csv, os, array
+import pygame, csv, os
 from Classes.BlockClass import Block, BLOCK_GROUP
 from Classes.LevelObjects.ChestClass import Chest, CHEST_GROUP
 from Classes.LevelObjects.GearClass import Gear, GEAR_GROUP
@@ -8,6 +8,7 @@ from Classes.LevelObjects.BatteryClass import Battery, BATTERY_GROUP
 from Classes.LevelObjects.KeyClass import Key, KEY_GROUP
 from Classes.LevelObjects.GunClass import GUN_GROUP
 from Classes.LevelObjects.ScrewdriverClass import SCREWDRIVER_GROUP
+from Classes.LevelObjects.DoorClass import Door, DOOR_GROUP
 
 GAP = 64
 TILESET_PATH = "Assets/Tiles/"
@@ -30,7 +31,7 @@ class TileMap():
 
     def drawMap(self, window, camera):
         window.blit(self.map_surface, (0 - camera.offset.x, 0 - camera.offset.y))
-        for object in (GEAR_GROUP.sprites() + NOTICE_GROUP.sprites() + BATTERY_GROUP.sprites() + KEY_GROUP.sprites() + CHEST_GROUP.sprites() + GUN_GROUP.sprites() + SCREWDRIVER_GROUP.sprites()):
+        for object in (GEAR_GROUP.sprites() + NOTICE_GROUP.sprites() + BATTERY_GROUP.sprites() + KEY_GROUP.sprites() + CHEST_GROUP.sprites() + GUN_GROUP.sprites() + SCREWDRIVER_GROUP.sprites()) + DOOR_GROUP.sprites():
             object.updateImage()
             window.blit(object.image, (object.rect.x - camera.offset.x, object.rect.y - camera.offset.y))
 
@@ -84,6 +85,7 @@ class TileMap():
                     case 2: objects.append(Gear(x * 64, y * 64))
                     case 3: objects.append(Key(x * 64, y * 64))
                     case 5: objects.append(Battery(x * 64, y * 64))
+                    case 8: objects.append(Door(x * 64, y * 64))
                 x += 1
             y += 1
 

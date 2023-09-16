@@ -43,7 +43,7 @@ def draw(window, player, map, camera, portrait):
 def main(window):
     clock = pygame.time.Clock()
     player = Player()
-    map = TileMap(LEVEL_1_TEST_MAPS)
+    map = TileMap(LEVEL_1_MAPS)
     portrait = Portrait(75, 0)
 
     camera = Camera.Camera(player, WIDTH, HEIGHT, map)
