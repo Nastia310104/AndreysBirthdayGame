@@ -1,5 +1,5 @@
 from Classes import ObjectClass
-from Classes.ChargeBarClass import ChargeBar
+from Classes.WindowObjects.ChargeBarClass import ChargeBar
 from Classes.LevelObjects.BulletClass import Bullet, BULLET_GROUP
 
 import pygame

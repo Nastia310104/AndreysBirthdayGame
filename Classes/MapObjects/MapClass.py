@@ -1,9 +1,10 @@
 import pygame, csv, os
-from Classes.BlockClass import Block, BLOCK_GROUP
+from Classes.EnemyClass import Enemy
+from Classes.MapObjects.BlockClass import Block, BLOCK_GROUP
+from Classes.MapObjects.TrapClass import Trap, TRAP_GROUP
 from Classes.LevelObjects.ChestClass import Chest, CHEST_GROUP
 from Classes.LevelObjects.GearClass import Gear, GEAR_GROUP
 from Classes.LevelObjects.NoticeClass import Notice, NOTICE_GROUP
-from Classes.EnemyClass import Enemy
 from Classes.LevelObjects.BatteryClass import Battery, BATTERY_GROUP
 from Classes.LevelObjects.KeyClass import Key, KEY_GROUP
 from Classes.LevelObjects.GunClass import GUN_GROUP
@@ -36,6 +37,7 @@ class TileMap():
             window.blit(object.image, (object.rect.x - camera.offset.x, object.rect.y - camera.offset.y))
 
     def fillMap(self):
+        TRAP_GROUP.draw(self.map_surface)
         BLOCK_GROUP.draw(self.map_surface)
 
     def readCsv(self, filename):
@@ -57,8 +59,10 @@ class TileMap():
         for row in map:
             x = 0
             for tile in row:
-                if int(tile) > GAP and int(tile) <= GAP+9:
-                    block =Block((TILESET_PATH + TILE_NAME + '0' + str(int(tile) - GAP) + '.png'), x * self.tile_size, y * self.tile_size)
+                if int(tile) == 129:
+                    block = Trap(x * self.tile_size, y * self.tile_size)
+                elif int(tile) > GAP and int(tile) <= GAP+9:
+                    block = Block((TILESET_PATH + TILE_NAME + '0' + str(int(tile) - GAP) + '.png'), x * self.tile_size, y * self.tile_size)
                 elif int(tile) > GAP + 9:
                     block = Block((TILESET_PATH + TILE_NAME + str(int(tile) - GAP) + '.png'), x * self.tile_size, y * self.tile_size)
                 tiles.append(block)

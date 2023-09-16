@@ -1,5 +1,5 @@
 import pygame
-from Classes.HeartClass import Heart
+from Classes.LevelObjects.HeartClass import Heart
 from Classes.MainDeviceClass import MainObject
 
 FRAME_PATH = 'Assets/MainObjects/GUI.png'

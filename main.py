@@ -7,13 +7,13 @@ pygame.font.init()
 
 sys.path += ["Classes", "Controllers"]
 
-from Classes.MapClass import TileMap
+from Classes.MapObjects.MapClass import TileMap
 from Classes.PlayerClass import Player
 import Controllers.SpriteController as Sprite
 import Classes.CameraClass as Camera
 from Classes.EnemyClass import Enemy, ENEMY_GROUP
 from Classes.LevelObjects.BulletClass import BULLET_GROUP
-from Classes.PortraitClass import Portrait
+from Classes.WindowObjects.PortraitClass import Portrait
  
 pygame.display.set_caption("Andrei's Crusade")
 app = tkinter.Tk()
@@ -63,8 +63,7 @@ def main(window):
                 run = False
                 break
 
-            if event.type == pygame.KEYDOWN:
-                player.animation_count = 0
+            if event.type == pygame.KEYDOWN and not player.is_dead:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     player.go_left = True
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
