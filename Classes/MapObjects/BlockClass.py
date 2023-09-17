@@ -1,8 +1,9 @@
-from Classes import ObjectClass
+from Classes.ObjectClass import Object
 import pygame
+
 BLOCK_GROUP = pygame.sprite.Group()
 
-class Block(ObjectClass.Object):
+class Block(Object):
     def __init__(self, image, x, y):
         super().__init__(x, y)
         self.image = pygame.transform.scale2x(pygame.image.load(image))

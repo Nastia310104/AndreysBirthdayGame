@@ -3,10 +3,11 @@ import Controllers.SpriteController as Sprite
 from Classes.LevelObjects.ChestClass import Chest
 from Classes.LevelObjects.GunClass import GUN_GROUP
 from Classes.LevelObjects.ScrewdriverClass import SCREWDRIVER_GROUP
-from Classes.ChargeBarClass import ChargeBar
+from Classes.WindowObjects.ChargeBarClass import ChargeBar
 from Classes.EnemyClass import Enemy
-from Classes.BlockClass import Block
+from Classes.MapObjects.BlockClass import Block
 from Classes.LevelObjects.DoorClass import Door
+from Classes.MapObjects.TrapClass import Trap
 
 PLAYER_SPRITE_PATH = "Assets/RedHood"
 
@@ -29,7 +30,6 @@ class Player(pygame.sprite.Sprite):
         self.is_attack = False
 # Player's counters
         self.jump_count = 0
-        self.dieing_count = 0
         self.injured_time_count = 0
         self.animation_count = 0
         self.attack_count = 0
@@ -60,22 +60,15 @@ class Player(pygame.sprite.Sprite):
             self.velocity.x = 0
 
     def loop(self, dt, tiles):
-        if not self.is_dead:
-            self.checkHealth()
-            self.move(dt, tiles)
-            self.handleAttack()
-            self.updateSprite()
-        else:
-            self.die()
-
-    def die(self):
-        if self.dieing_count <= 30:
-            self.updateSprite()
-            self.dieing_count += 1
+        self.checkHealth()
+        self.move(dt, tiles)
+        self.handleAttack()
+        self.updateSprite()
 
     def checkHealth(self):
         if self.health == 0:
             self.is_dead = True
+            self.animation_count = 0
 
 ########################### Handle movement ###########################
 
@@ -149,6 +142,8 @@ class Player(pygame.sprite.Sprite):
                         tile.checkKey(self)
                 elif isinstance(tile, Block):
                     hits.append(tile)
+                elif isinstance (tile, Trap):
+                    self.health = 0
                 elif isinstance (tile, Enemy):
                     if not tile.is_dead:
                         if self.injured_time_count <= 0:
@@ -199,6 +194,7 @@ class Player(pygame.sprite.Sprite):
         if self.is_dead:
             self.spritesheet = "die"
             self.ANIMATION_DELAY = 8
+            if self.animation_count >= 60: self.animation_count = 60
         elif self.is_attack:
             self.spritesheet = "attack"
         elif self.velocity.y < 0:
