@@ -1,5 +1,5 @@
 import pygame
-from Classes.LevelObjects.HeartClass import Heart
+from Classes.LevelObjects.HeartClass import Heart, HEART_GROUP
 from Classes.MainDeviceClass import MainObject
 
 FRAME_PATH = 'Assets/MainObjects/GUI.png'
@@ -21,6 +21,7 @@ class Portrait():
         self.rect.x = x
         self.rect.y = y
         self.heart = Heart(375, 50)
+        HEART_GROUP.remove(self.heart)
         self.getPositions()
 
     def loadSprites(self, x, y, width, height):

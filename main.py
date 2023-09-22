@@ -9,7 +9,7 @@ sys.path += ["Classes", "Controllers"]
 
 from Classes.MapObjects.MapClass import TileMap
 from Classes.PlayerClass import Player
-import Controllers.SpriteController as Sprite
+from Controllers import MenuController as Pause, SpriteController as Sprite
 import Classes.CameraClass as Camera
 from Classes.EnemyClass import Enemy, ENEMY_GROUP
 from Classes.LevelObjects.BulletClass import BULLET_GROUP
@@ -22,7 +22,7 @@ WIDTH, HEIGHT = app.winfo_screenwidth(), app.winfo_screenheight()
 FPS = 60
 
 LEVEL_1_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/level_1_mainObjects.csv', 'Levels/Level_1/level_1_enemies.csv']
-LEVEL_1_TEST_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/test_level_1_mainObjects.csv', 'Levels/Level_1/level_1_enemies.csv']
+LEVEL_1_TEST_MAPS = ['Levels/Level_1/test_level_1_mainMap.csv', 'Levels/Level_1/test_level_1_mainObjects.csv', 'Levels/Level_1/level_1_enemies.csv']
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -43,7 +43,7 @@ def draw(window, player, map, camera, portrait):
 def main(window):
     clock = pygame.time.Clock()
     player = Player()
-    map = TileMap(LEVEL_1_MAPS)
+    map = TileMap(LEVEL_1_TEST_MAPS)
     portrait = Portrait(75, 0)
 
     camera = Camera.Camera(player, WIDTH, HEIGHT, map)
@@ -54,16 +54,27 @@ def main(window):
 
     level_objects = map.tiles + map.objects + map.enemies
 
-    run = True
+    run = Pause.setMenu(window, "start")
+    clock.tick(5)
     while run:
         delta_time = clock.tick(FPS) * .001 * FPS
-
+            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 break
 
+            #  TODO: add difference between is_deing and is_dead
+            if player.is_dead: 
+                Pause.setMenu(window, "death")
+
             if event.type == pygame.KEYDOWN and not player.is_dead:
+                if event.key == pygame.K_ESCAPE:
+                    Pause.setMenu(window)
+                    clock.tick(5)
+                    player.go_left = False
+                    player.go_right = False
+
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     player.go_left = True
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
