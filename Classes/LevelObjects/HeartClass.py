@@ -18,6 +18,8 @@ class Heart(LevelObject):
         HEART_GROUP.add(self)
 
     def collect(self, player):
-        player.health += 25       
+        if player.health < 4:
+            player.health += 1
+            player.health_bar.increaseCharge()
         return super().collect()
     

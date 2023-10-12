@@ -33,7 +33,7 @@ class Player(pygame.sprite.Sprite):
         self.injured_time_count = 0
         self.animation_count = 0
         self.attack_count = 0
-        self.health = 100
+        self.health = 4
         self.notices = []
         self.gears = []
         self.keys = []
@@ -49,6 +49,7 @@ class Player(pygame.sprite.Sprite):
     
     def draw(self, window, camera):
         window.blit(self.sprite, (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y))
+        # pygame.draw.rect(window, (255, 255, 0), (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y, self.rect.width, self.rect.height), 7)
         self.health_bar.draw(window)
         if self.have_gun:
             self.gun.draw(window)
@@ -66,9 +67,11 @@ class Player(pygame.sprite.Sprite):
         self.updateSprite()
 
     def checkHealth(self):
-        if self.health == 0:
+        if self.health == 0 and not self.is_dead:
             self.is_dead = True
             self.animation_count = 0
+            self.go_left = False
+            self.go_right = False
 
 ########################### Handle movement ###########################
 
@@ -144,12 +147,13 @@ class Player(pygame.sprite.Sprite):
                     hits.append(tile)
                 elif isinstance (tile, Trap):
                     self.health = 0
+                    hits.append(tile)
                 elif isinstance (tile, Enemy):
                     if not tile.is_dead:
                         if self.injured_time_count <= 0:
                             self.injured_time_count = 30
                             self.health_bar.decreaseCharge()
-                            self.health -= 25
+                            self.health -= 1
                         self.injured_time_count -= 1
                 else:
                     self.collectObject(tile)

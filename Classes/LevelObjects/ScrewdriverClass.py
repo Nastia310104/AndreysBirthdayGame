@@ -1,7 +1,7 @@
 import pygame
 from Classes.LevelObjects.LevelObjectClass import LevelObject
 
-IMAGE_PATH = 'Assets/LevelObjects/screwdriver_sub.png'
+IMAGE_PATH = 'Assets/LevelObjects/screwdriver.png'
 
 SCREWDRIVER_GROUP = pygame.sprite.Group()
 
