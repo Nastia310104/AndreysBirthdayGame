@@ -1,5 +1,4 @@
-from Classes.ObjectClass import Object
-import pygame
+from Classes.ObjectClass import Object, pygame
 
 BLOCK_GROUP = pygame.sprite.Group()
 

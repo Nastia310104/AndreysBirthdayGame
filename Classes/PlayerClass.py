@@ -1,5 +1,5 @@
 import pygame
-import Controllers.SpriteController as Sprite, Controllers.SoundsController as Sound
+import Controllers.SpriteController as Sprite, Controllers.SoundsController as Sound, Controllers.MenuController as Menu
 from Classes.LevelObjects.ChestClass import Chest
 from Classes.LevelObjects.GunClass import GUN_GROUP
 from Classes.LevelObjects.ScrewdriverClass import SCREWDRIVER_GROUP
@@ -8,6 +8,7 @@ from Classes.EnemyClass import Enemy
 from Classes.MapObjects.BlockClass import Block
 from Classes.LevelObjects.DoorClass import Door
 from Classes.MapObjects.TrapClass import Trap
+from Classes.MapObjects.PlatformClass import Platform, PLATFORM_GROUP
 
 PLAYER_SPRITE_PATH = "Assets/RedHood"
 
@@ -27,6 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.go_left, self.go_right = False, False
         self.is_jumping, self.on_ground = False, False
         self.is_dead = False
+        self.is_dieing = False
         self.is_attack = False
 # Player's counters
         self.jump_count = 0
@@ -49,7 +51,6 @@ class Player(pygame.sprite.Sprite):
     
     def draw(self, window, camera):
         window.blit(self.sprite, (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y))
-        # pygame.draw.rect(window, (255, 255, 0), (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y, self.rect.width, self.rect.height), 7)
         self.health_bar.draw(window)
         if self.have_gun:
             self.gun.draw(window)
@@ -67,12 +68,16 @@ class Player(pygame.sprite.Sprite):
         self.updateSprite()
 
     def checkHealth(self):
-        if self.health == 0 and not self.is_dead:
+        if self.health == 0 and not self.is_dieing:
             Sound.PLAYER_DEAD.play()
-            self.is_dead = True
+            self.is_dieing = True
             self.animation_count = 0
+            self.dieing_count = 0
             self.go_left = False
             self.go_right = False
+        elif self.is_dieing and self.animation_count >= 42:
+            self.animation_count = 42
+            self.is_dead = True
 
 ########################### Handle movement ###########################
 
@@ -135,7 +140,7 @@ class Player(pygame.sprite.Sprite):
 
     def get_hits(self, tiles):
         hits = []
-        tiles += (GUN_GROUP.sprites() + SCREWDRIVER_GROUP.sprites())
+        tiles += (GUN_GROUP.sprites() + SCREWDRIVER_GROUP.sprites() + PLATFORM_GROUP.sprites())
         for tile in tiles:
             if self.rect.colliderect(tile):
                 if isinstance(tile, Chest):
@@ -145,13 +150,13 @@ class Player(pygame.sprite.Sprite):
                     if not tile.is_opened:
                         hits.append(tile)
                         tile.checkKey(self)
-                elif isinstance(tile, Block):
+                elif isinstance(tile, Block) or isinstance(tile, Platform):
                     hits.append(tile)
                 elif isinstance (tile, Trap):
                     self.health = 0
                     hits.append(tile)
                 elif isinstance (tile, Enemy):
-                    if not tile.is_dead and not self.is_dead:
+                    if not tile.is_dead and not self.is_dieing:
                         if self.injured_time_count <= 0:
                             self.injured_time_count = 30
                             self.health_bar.decreaseCharge()
@@ -188,20 +193,23 @@ class Player(pygame.sprite.Sprite):
                 self.is_jumping = False
                 self.velocity.y = 0
                 self.position.y = tile.rect.top
+                if isinstance(tile, Platform):
+                    self.position.y += 3
                 self.rect.bottom = self.position.y
             elif self.velocity.y < 0:
                 self.velocity.y = 0
                 self.position.y = tile.rect.bottom + self.rect.h
+                if isinstance(tile, Platform):
+                    self.position.y += 6
                 self.rect.bottom = self.position.y
 
 ########################### Animate character ###########################
 
     def updateSprite(self):
         self.ANIMATION_DELAY = 4
-        if self.is_dead:
+        if self.is_dieing:
             self.spritesheet = "die"
-            self.ANIMATION_DELAY = 8
-            if self.animation_count >= 60: self.animation_count = 60
+            self.ANIMATION_DELAY = 6
         elif self.is_attack:
             self.spritesheet = "attack"
         elif self.velocity.y < 0:

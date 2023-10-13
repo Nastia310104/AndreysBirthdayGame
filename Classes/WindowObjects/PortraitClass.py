@@ -60,5 +60,4 @@ class Portrait():
         window.blit(self.main_object.sprites[3 - len(player.notices)], (450, 0))
 
         if player.have_screwdriver == True:
-            window.blit(player.screwdriver.image, (400, 150))
-            player.screwdriver.updateImage()
+            window.blit(player.screwdriver.portrait_image, (530, -10))

@@ -1,11 +1,10 @@
-import pygame
-from Classes.ObjectClass import Object
+from Classes.ObjectClass import Object, Sound, pygame
 
 class LevelObject(Object):
     ANIMATION_DELAY = 6
     def __init__(self, x, y):
-        self.animation_count = 0
         super().__init__(x, y)
+        self.animation_count = 0
 
     def loadSprites(self, path, factor):
         spritesheet = pygame.image.load(path)

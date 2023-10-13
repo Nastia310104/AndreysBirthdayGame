@@ -1,15 +1,13 @@
-from Classes import ObjectClass
+from Classes.ObjectClass import Object, Sound, pygame
 from Classes.LevelObjects.GunClass import Gun, GUN_GROUP
 from Classes.LevelObjects.ScrewdriverClass import Screwdriver, SCREWDRIVER_GROUP
-from Controllers import SoundsController as Sound
-import pygame
 
 OBJECT_PATH = 'Assets/LevelObjects/Object_1.png'
 WIDTH, HEIGHT = 32, 32
 
 CHEST_GROUP = pygame.sprite.Group()
 
-class Chest(ObjectClass.Object):
+class Chest(Object):
     ANIMATION_DELAY = 6
 
     def __init__(self, x, y, content):

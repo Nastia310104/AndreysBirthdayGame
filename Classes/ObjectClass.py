@@ -1,4 +1,5 @@
 import pygame
+import Controllers.SoundsController as Sound
 
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, width=64, height=64, name=None):
