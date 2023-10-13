@@ -1,5 +1,6 @@
 import pygame
 from Classes.LevelObjects.LevelObjectClass import LevelObject
+from Controllers import SoundsController as Sound
 
 IMAGE_PATH = 'Assets/LevelObjects/Object_0.png'
 
@@ -17,5 +18,6 @@ class Notice(LevelObject):
         NOTICE_GROUP.add(self)
 
     def collect(self, player):
+        Sound.NOTICE_COLLECTED.play()
         player.notices.append(self)       
         return super().collect()

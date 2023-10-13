@@ -1,4 +1,5 @@
 import pygame
+from Controllers import SoundsController as Sound
 
 IMAGE_PATH = 'Assets/MainObjects/GUI.png'
 WIDTH, HEIGHT = 32, 16
@@ -13,18 +14,25 @@ class Button(pygame.sprite.Sprite):
 		self.button_name = self.createTextImage(text)
 		self.button_name_position = pygame.math.Vector2()
 		self.pressed_button_name_position = 0
+		self.play_sound = True
 
 	def checkClick(self):
 		pos = pygame.mouse.get_pos()
 		self.image = self.button_image
 		self.pressed_button_name_position = 0
-
-		if self.rect.collidepoint(pos):
+		if not self.rect.collidepoint(pos):
+			self.play_sound = True
+		
+		elif self.rect.collidepoint(pos):
+			if self.play_sound:
+				Sound.BUTTON_HOVER.play()
+				self.play_sound = False
 			self.image = self.pressed_button_image
 			self.pressed_button_name_position = 4
 			if pygame.mouse.get_pressed()[0]:
+				Sound.BUTTON_PRESSED.play()
 				return True
-			
+
 	def draw(self, window, gap):
 		self.rect.x = (window.get_width() - self.rect.width) // 2
 		self.rect.y = (window.get_height() - self.rect.height) // 2 + gap

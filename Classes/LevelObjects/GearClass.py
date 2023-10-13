@@ -1,5 +1,6 @@
 import pygame
 from Classes.LevelObjects.LevelObjectClass import LevelObject
+from Controllers import SoundsController as Sound
 
 IMAGE_PATH = 'Assets/LevelObjects/gear.png'
 
@@ -17,5 +18,6 @@ class Gear(LevelObject):
         GEAR_GROUP.add(self)
 
     def collect(self, player):
+        Sound.GEAR_OR_KEY_COLLECTED.play()
         player.gears.append(self)    
         return super().collect()

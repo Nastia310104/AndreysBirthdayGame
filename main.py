@@ -4,12 +4,13 @@ import tkinter
 
 pygame.init()
 pygame.font.init()
+pygame.mixer.init()
 
 sys.path += ["Classes", "Controllers"]
 
 from Classes.MapObjects.MapClass import TileMap
 from Classes.PlayerClass import Player
-from Controllers import MenuController as Pause, SpriteController as Sprite
+from Controllers import MenuController as Pause, SpriteController as Sprite, SoundsController as Sound
 import Classes.CameraClass as Camera
 from Classes.EnemyClass import Enemy, ENEMY_GROUP
 from Classes.LevelObjects.BulletClass import BULLET_GROUP
@@ -53,6 +54,7 @@ def main(window):
     camera.setMethod(follow)
 
     level_objects = map.tiles + map.objects + map.enemies
+    Sound.playBackgroungMusic()
 
     run = Pause.setMenu(window, "start")
     clock.tick(5)

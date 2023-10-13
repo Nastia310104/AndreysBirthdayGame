@@ -1,6 +1,7 @@
 from Classes import ObjectClass
 from Classes.WindowObjects.ChargeBarClass import ChargeBar
 from Classes.LevelObjects.BulletClass import Bullet, BULLET_GROUP
+from Controllers import SoundsController as Sound
 
 import pygame
 
@@ -22,6 +23,7 @@ class Gun(ObjectClass.Object):
     def collect(self, player):
         player.gun = self
         player.have_gun = True
+        Sound.TOOLS_COLLECTED.play()
         return super().collect()
     
     def draw(self, window):
@@ -29,6 +31,7 @@ class Gun(ObjectClass.Object):
         window.blit(pygame.transform.scale_by(self.image, 1.8), (375, 98))
 
     def collectBattery(self):
+        Sound.GUN_CHARGED.play()
         self.power_bar.increaseCharge()
         self.power += 1
 
@@ -40,3 +43,4 @@ class Gun(ObjectClass.Object):
         self.power -= 1
         self.power_bar.decreaseCharge()
         self.cooldown = 30
+        Sound.SHOOT.play()

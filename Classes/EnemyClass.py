@@ -1,6 +1,6 @@
 import pygame
 from Classes.ObjectClass import Object
-import Controllers.SpriteController as Sprite
+import Controllers.SpriteController as Sprite, Controllers.SoundsController as Sound
 from Classes.LevelObjects.BulletClass import Bullet, BULLET_GROUP
 
 ENEMY_SPRITE_PATH = 'Assets/NPSs/Slime/'
@@ -40,6 +40,8 @@ class Enemy(Object):
     def die(self):
         if self.dieing_count == 30:
             self.kill()
+        elif self.dieing_count == 10:
+            Sound.ENEMY_DIE.play()
         self.image = self.sprites['blow_' + self.direction][(self.dieing_count // int(self.ANIMATION_DELAY * 1.5)) % 5]
         self.dieing_count += 1
 
@@ -89,6 +91,7 @@ class Enemy(Object):
     def checkPlayerCollision(self, player):
         if self.vision.colliderect(player) and not player.is_dead:
             if self.is_attack == False:
+                Sound.ENEMY_ATTACK.play()
                 self.animation_count = 0
                 self.is_attack = True
                 self.VELOCITY = 10
@@ -100,6 +103,7 @@ class Enemy(Object):
     def checkBulletCollision(self):
         for bullet in BULLET_GROUP.sprites():
             if self.rect.colliderect(bullet):
+                Sound.ENEMY_HURT.play()
                 self.is_dead = True
                 bullet.kill()
 
