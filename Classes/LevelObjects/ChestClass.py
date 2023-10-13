@@ -1,6 +1,7 @@
 from Classes import ObjectClass
 from Classes.LevelObjects.GunClass import Gun, GUN_GROUP
 from Classes.LevelObjects.ScrewdriverClass import Screwdriver, SCREWDRIVER_GROUP
+from Controllers import SoundsController as Sound
 import pygame
 
 OBJECT_PATH = 'Assets/LevelObjects/Object_1.png'
@@ -40,6 +41,7 @@ class Chest(ObjectClass.Object):
         if index == 3:
             self.is_opened = True
             self.updateContent()
+            Sound.CHEST_OPENED.play()
 
         self.image = self.sprites[index]
         self.animation_count += 1

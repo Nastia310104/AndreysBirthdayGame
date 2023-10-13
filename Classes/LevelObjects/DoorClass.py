@@ -1,5 +1,6 @@
 import pygame
 from Classes.LevelObjects.LevelObjectClass import LevelObject
+from Controllers import SoundsController as Sound
 
 IMAGE_PATH = 'Assets/LevelObjects/Entry.png'
 
@@ -21,6 +22,7 @@ class Door(LevelObject):
     def openDoor(self, player):
         index = (self.animation_count // self.ANIMATION_DELAY) % 4
         if index == 3:
+            Sound.DOOR_OPENS.play()
             self.is_opened = True
             player.keys.pop(len(player.keys) - 1)
 

@@ -1,5 +1,6 @@
 import pygame
 from Classes.LevelObjects.LevelObjectClass import LevelObject
+from Controllers import SoundsController as Sound
 
 IMAGE_PATH = 'Assets/MainObjects/heart.png'
 
@@ -19,7 +20,8 @@ class Heart(LevelObject):
 
     def collect(self, player):
         if player.health < 4:
+            Sound.HEART_COLLECTED.play()
             player.health += 1
             player.health_bar.increaseCharge()
-        return super().collect()
+            return super().collect()
     

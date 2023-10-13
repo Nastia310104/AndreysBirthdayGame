@@ -1,5 +1,6 @@
 import pygame
 from Classes.LevelObjects.LevelObjectClass import LevelObject
+from Controllers import SoundsController as Sound
 
 IMAGE_PATH = 'Assets/LevelObjects/screwdriver.png'
 
@@ -18,5 +19,6 @@ class Screwdriver(LevelObject):
     def collect(self, player):
         player.screwdriver = self
         player.have_screwdriver = True
+        Sound.TOOLS_COLLECTED.play()
         return super().collect()
     

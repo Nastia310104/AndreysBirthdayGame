@@ -1,5 +1,5 @@
 import pygame
-import Controllers.SpriteController as Sprite
+import Controllers.SpriteController as Sprite, Controllers.SoundsController as Sound
 from Classes.LevelObjects.ChestClass import Chest
 from Classes.LevelObjects.GunClass import GUN_GROUP
 from Classes.LevelObjects.ScrewdriverClass import SCREWDRIVER_GROUP
@@ -68,6 +68,7 @@ class Player(pygame.sprite.Sprite):
 
     def checkHealth(self):
         if self.health == 0 and not self.is_dead:
+            Sound.PLAYER_DEAD.play()
             self.is_dead = True
             self.animation_count = 0
             self.go_left = False
@@ -105,6 +106,7 @@ class Player(pygame.sprite.Sprite):
 ########################### Handle jumping ###########################
 
     def jump(self):
+        Sound.JUMP.play()
         self.animation_count = 0
         if self.jump_count == 1:
             self.velocity.y -= 5 * self.gravity
@@ -149,11 +151,12 @@ class Player(pygame.sprite.Sprite):
                     self.health = 0
                     hits.append(tile)
                 elif isinstance (tile, Enemy):
-                    if not tile.is_dead:
+                    if not tile.is_dead and not self.is_dead:
                         if self.injured_time_count <= 0:
                             self.injured_time_count = 30
                             self.health_bar.decreaseCharge()
                             self.health -= 1
+                            Sound.PLAYER_HURT.play()
                         self.injured_time_count -= 1
                 else:
                     self.collectObject(tile)
