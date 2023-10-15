@@ -1,14 +1,11 @@
-from Classes import ObjectClass
+from Classes.ObjectClass import Object, Sound, pygame
 from Classes.WindowObjects.ChargeBarClass import ChargeBar
-from Classes.LevelObjects.BulletClass import Bullet, BULLET_GROUP
-from Controllers import SoundsController as Sound
-
-import pygame
+from Classes.LevelObjects.BulletClass import Bullet
 
 IMAGE_PATH = 'Assets/LevelObjects/gun.png'
 GUN_GROUP = pygame.sprite.Group()
 
-class Gun(ObjectClass.Object):
+class Gun(Object):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.image = pygame.transform.scale2x(pygame.image.load(IMAGE_PATH))
@@ -16,14 +13,15 @@ class Gun(ObjectClass.Object):
         self.rect.x = x
         self.rect.y = y
         self.is_collected = False
-        self.power = 1
+        self.power = 4
         self.cooldown = 0
-        self.power_bar = ChargeBar(200, 78, 16, 3)
+        self.power_bar = ChargeBar(200, 78, 16, 0)
 
     def collect(self, player):
+        Sound.TOOLS_COLLECTED.play()
         player.gun = self
         player.have_gun = True
-        Sound.TOOLS_COLLECTED.play()
+        GUN_GROUP.remove(self)
         return super().collect()
     
     def draw(self, window):

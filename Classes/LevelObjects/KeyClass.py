@@ -1,6 +1,4 @@
-import pygame
-from Classes.LevelObjects.LevelObjectClass import LevelObject
-from Controllers import SoundsController as Sound
+from Classes.LevelObjects.LevelObjectClass import LevelObject, pygame, Sound
 
 IMAGE_PATH = 'Assets/LevelObjects/key.png'
 

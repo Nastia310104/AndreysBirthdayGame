@@ -1,10 +1,9 @@
-from Classes import ObjectClass
-import pygame
+from Classes.ObjectClass import Object, pygame
 
 IMAGE_PATH = 'Assets/LevelObjects/bullet.png'
 BULLET_GROUP = pygame.sprite.Group()
 
-class Bullet(ObjectClass.Object):
+class Bullet(Object):
     SPEED = 15
     def __init__(self, x, y, direction):
         super().__init__(x, y)

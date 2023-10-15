@@ -2,6 +2,7 @@ import pygame, csv, os
 from Classes.EnemyClass import Enemy
 from Classes.MapObjects.BlockClass import Block, BLOCK_GROUP
 from Classes.MapObjects.TrapClass import Trap, TRAP_GROUP
+from Classes.MapObjects.PlatformClass import Platform, PLATFORM_GROUP
 from Classes.LevelObjects.ChestClass import Chest, CHEST_GROUP
 from Classes.LevelObjects.GearClass import Gear, GEAR_GROUP
 from Classes.LevelObjects.NoticeClass import Notice, NOTICE_GROUP
@@ -33,7 +34,17 @@ class TileMap():
 
     def drawMap(self, window, camera):
         window.blit(self.map_surface, (0 - camera.offset.x, 0 - camera.offset.y))
-        for object in (GEAR_GROUP.sprites() + NOTICE_GROUP.sprites() + BATTERY_GROUP.sprites() + KEY_GROUP.sprites() + CHEST_GROUP.sprites() + GUN_GROUP.sprites() + SCREWDRIVER_GROUP.sprites()) + DOOR_GROUP.sprites() + HEART_GROUP.sprites():
+        objects = (GEAR_GROUP.sprites() + 
+                       NOTICE_GROUP.sprites() + 
+                       BATTERY_GROUP.sprites() + 
+                       KEY_GROUP.sprites() + 
+                       CHEST_GROUP.sprites() + 
+                       GUN_GROUP.sprites() + 
+                       SCREWDRIVER_GROUP.sprites() + 
+                       DOOR_GROUP.sprites() + 
+                       HEART_GROUP.sprites() + 
+                       PLATFORM_GROUP.sprites())
+        for object in (objects):
             object.updateImage()
             window.blit(object.image, (object.rect.x - camera.offset.x, object.rect.y - camera.offset.y))
 
@@ -62,6 +73,8 @@ class TileMap():
             for tile in row:
                 if int(tile) == 129:
                     block = Trap(x * self.tile_size, y * self.tile_size)
+                elif int(tile) == 132:
+                    Platform(x * self.tile_size, y * self.tile_size)
                 elif int(tile) > GAP and int(tile) <= GAP+9:
                     block = Block((TILESET_PATH + TILE_NAME + '0' + str(int(tile) - GAP) + '.png'), x * self.tile_size, y * self.tile_size)
                 elif int(tile) > GAP + 9:
@@ -83,15 +96,15 @@ class TileMap():
             x = 0
             for object in row:
                 match int(object):
-                    case 0: objects.append(Notice(x * 64, y * 64))
+                    case 0: objects.append(Notice(x * self.tile_size, y * self.tile_size))
                     case 1: 
-                        objects.append(Chest(x * 64, y * 64, FIRST_LEVEL_CHEST_CONTENT[i]))
+                        objects.append(Chest(x * self.tile_size, y * self.tile_size, FIRST_LEVEL_CHEST_CONTENT[i]))
                         i += 1
-                    case 2: objects.append(Gear(x * 64, y * 64))
-                    case 3: objects.append(Key(x * 64, y * 64))
-                    case 5: objects.append(Battery(x * 64, y * 64))
-                    case 8: objects.append(Door(x * 64, y * 64))
-                    case 9: objects.append(Heart(x * 64, y * 64))
+                    case 2: objects.append(Gear(x * self.tile_size, y * self.tile_size))
+                    case 3: objects.append(Key(x * self.tile_size, y * self.tile_size))
+                    case 5: objects.append(Battery(x * self.tile_size, y * self.tile_size))
+                    case 8: objects.append(Door(x * self.tile_size, y * self.tile_size))
+                    case 9: objects.append(Heart(x * self.tile_size, y * self.tile_size))
                 x += 1
             y += 1
 
@@ -105,7 +118,7 @@ class TileMap():
             x = 0
             for nps in row:
                 if int(nps) == 6:
-                    NPSs.append(Enemy(x * 64, y * 64))
+                    NPSs.append(Enemy(x * self.tile_size, y * self.tile_size))
                 x += 1
             y += 1
 

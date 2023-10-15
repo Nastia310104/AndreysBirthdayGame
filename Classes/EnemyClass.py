@@ -1,5 +1,4 @@
-import pygame
-from Classes.ObjectClass import Object
+from Classes.ObjectClass import Object, pygame, Sound
 import Controllers.SpriteController as Sprite, Controllers.SoundsController as Sound
 from Classes.LevelObjects.BulletClass import Bullet, BULLET_GROUP
 

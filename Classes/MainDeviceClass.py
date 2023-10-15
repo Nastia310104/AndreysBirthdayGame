@@ -1,9 +1,6 @@
-import pygame
-from Classes.LevelObjects.LevelObjectClass import LevelObject
+from Classes.LevelObjects.LevelObjectClass import LevelObject, pygame
 
 IMAGE_PATH = 'Assets/LevelObjects/sabstitude.png'
-
-GEAR_GROUP = pygame.sprite.Group()
 
 class MainObject(LevelObject):
     def __init__(self, x, y):
@@ -14,4 +11,3 @@ class MainObject(LevelObject):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        GEAR_GROUP.add(self)
