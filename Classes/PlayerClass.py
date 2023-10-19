@@ -9,6 +9,8 @@ from Classes.MapObjects.BlockClass import Block
 from Classes.LevelObjects.DoorClass import Door
 from Classes.MapObjects.TrapClass import Trap
 from Classes.MapObjects.PlatformClass import Platform, PLATFORM_GROUP
+from Classes.LevelObjects.OfficeClass import Table
+from Classes.LevelObjects.PortalClass import Portal
 
 PLAYER_SPRITE_PATH = "Assets/RedHood"
 
@@ -30,6 +32,9 @@ class Player(pygame.sprite.Sprite):
         self.is_dead = False
         self.is_dieing = False
         self.is_attack = False
+        self.level_complete = False
+        self.in_portal = False
+        self.tools_collected = False
 # Player's counters
         self.jump_count = 0
         self.injured_time_count = 0
@@ -152,6 +157,12 @@ class Player(pygame.sprite.Sprite):
                         tile.checkKey(self)
                 elif isinstance(tile, Block) or isinstance(tile, Platform):
                     hits.append(tile)
+                elif isinstance(tile, Table):
+                    tile.checkParts(self)
+                elif isinstance(tile, Portal):
+                    if self.tools_collected:
+                        tile.is_open = True
+                        self.level_complete = True
                 elif isinstance (tile, Trap):
                     self.health = 0
                     hits.append(tile)
@@ -209,6 +220,9 @@ class Player(pygame.sprite.Sprite):
         self.ANIMATION_DELAY = 4
         if self.is_dieing:
             self.spritesheet = "die"
+            self.ANIMATION_DELAY = 6
+        elif self.in_portal:
+            self.spritesheet = "disappear"
             self.ANIMATION_DELAY = 6
         elif self.is_attack:
             self.spritesheet = "attack"

@@ -12,6 +12,8 @@ from Classes.LevelObjects.GunClass import GUN_GROUP
 from Classes.LevelObjects.ScrewdriverClass import SCREWDRIVER_GROUP
 from Classes.LevelObjects.DoorClass import Door, DOOR_GROUP
 from Classes.LevelObjects.HeartClass import Heart, HEART_GROUP
+from Classes.LevelObjects.OfficeClass import Table, Chair, OFFICE_GROUP
+from Classes.LevelObjects.PortalClass import Portal, PORTAL_GROUP
 
 GAP = 64
 TILESET_PATH = "Assets/Tiles/"
@@ -47,10 +49,15 @@ class TileMap():
         for object in (objects):
             object.updateImage()
             window.blit(object.image, (object.rect.x - camera.offset.x, object.rect.y - camera.offset.y))
+            
+        for portal in PORTAL_GROUP.sprites():
+            portal.draw(window, camera)
+
 
     def fillMap(self):
         TRAP_GROUP.draw(self.map_surface)
         BLOCK_GROUP.draw(self.map_surface)
+        OFFICE_GROUP.draw(self.map_surface)
 
     def readCsv(self, filename):
         map = []
@@ -103,8 +110,11 @@ class TileMap():
                     case 2: objects.append(Gear(x * self.tile_size, y * self.tile_size))
                     case 3: objects.append(Key(x * self.tile_size, y * self.tile_size))
                     case 5: objects.append(Battery(x * self.tile_size, y * self.tile_size))
+                    case 6: Chair(x * self.tile_size, y * self.tile_size)
+                    case 7: objects.append(Table(x * self.tile_size, y * self.tile_size))
                     case 8: objects.append(Door(x * self.tile_size, y * self.tile_size))
                     case 9: objects.append(Heart(x * self.tile_size, y * self.tile_size))
+                    case 10: objects.append(Portal(x * self.tile_size, y * self.tile_size))
                 x += 1
             y += 1
 

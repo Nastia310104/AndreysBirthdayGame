@@ -38,6 +38,11 @@ class Menu(pygame.sprite.Sprite):
 		self.draw(window, 'Start again?')
 		self.yes_button.draw(window, BUTTON_GAP * 0.7 * -1)
 		self.no_button.draw(window, BUTTON_GAP * 0.7)
+  
+	def drawLevelCompleteMenu(self, window):
+		self.draw(window, "Level complete. Congrats!")
+		self.restart_button.draw(window, BUTTON_GAP * 0.7 * -1)
+		self.quit_button.draw(window, BUTTON_GAP * 0.7)
 
 	def loadImage(self):
 		spritesheet = pygame.image.load(MENU_IMAGE)

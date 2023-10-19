@@ -83,12 +83,14 @@ class Enemy(Object):
         collisions = self.getHits(tiles)
         for tile in collisions:
             if self.velocity_x > 0:
+                self.rect.x = tile.rect.left - self.rect.w
                 self.direction = "left"
             elif self.velocity_x < 0:
+                self.rect.x = tile.rect.right
                 self.direction = "right"
 
     def checkPlayerCollision(self, player):
-        if self.vision.colliderect(player) and not player.is_dead:
+        if self.vision.colliderect(player) and not player.is_dieing:
             if self.is_attack == False:
                 Sound.ENEMY_ATTACK.play()
                 self.animation_count = 0

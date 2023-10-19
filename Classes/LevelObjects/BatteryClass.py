@@ -1,23 +1,20 @@
-from Classes.ObjectClass import Object, pygame
+from Classes.LevelObjects.LevelObjectClass import LevelObject, pygame, Sound
 
-IMAGE_PATH = 'Assets/LevelObjects/Battery/battery_'
+IMAGE_PATH = 'Assets/LevelObjects/battery_25x50px.png'
+
 BATTERY_GROUP = pygame.sprite.Group()
 
-class Battery(Object):
+class Battery(LevelObject):
+    ANIMATION_DELAY = 1
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.animation_count = 1
+        self.width = 18
+        self.height = 25
+        self.loadSprites(IMAGE_PATH, 2)
         self.rect = self.image.get_rect()
         self.rect.x = x + 10
         self.rect.y = y + 10
         BATTERY_GROUP.add(self)
-
-    def updateImage(self):
-        # TODO: Change when new battary found (it cause memory leak)
-        if self.animation_count == 61: self.animation_count = 1
-
-        self.image = pygame.transform.scale_by((pygame.image.load(IMAGE_PATH + str(self.animation_count) + '.png')), 2)
-        self.animation_count += 1
 
     def collect(self, player):
         if player.have_gun and player.gun.power < 4:

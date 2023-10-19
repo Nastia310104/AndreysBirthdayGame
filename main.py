@@ -43,12 +43,12 @@ def main(window):
     clock = pygame.time.Clock()
     player = Player()
     map = TileMap(LEVEL_1_TEST_MAPS)
-    level_objects = map.tiles + map.objects + map.enemies
     portrait = Portrait(75, 0)
     camera = Camera.Camera(player, WIDTH, HEIGHT, map)
     follow = Camera.Follow(camera)
     camera.setMethod(follow)
     background = Background(WIDTH, HEIGHT)
+    level_objects = map.tiles + map.objects + map.enemies
 
     Sound.playBackgroungMusic()
 
@@ -66,6 +66,9 @@ def main(window):
                 Menu.setMenu(window, clock, "death")
 
             if event.type == pygame.KEYDOWN and not player.is_dieing:
+                if event.key == pygame.K_e and player.level_complete:
+                    Menu.setMenu(window, clock, "level_complete")
+
                 if event.key == pygame.K_ESCAPE:
                     Menu.setMenu(window, clock)
                     player.go_left = False

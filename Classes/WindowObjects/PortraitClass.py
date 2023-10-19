@@ -51,11 +51,11 @@ class Portrait():
         for key in player.keys:
             key.updateImage()
             for i in range(len(player.keys)):
-                key.draw(window, 75 + i * key.image.get_width(), 125)
+                key.draw(window, 75 + i * key.image.get_width(), 180)
         for gear in player.gears:
             gear.updateImage()
             for i in range(len(player.gears)):
-                gear.draw(window, 75 + i * gear.image.get_width(), 175)
+                gear.draw(window, 75 + i * gear.image.get_width(), 130)
 
         window.blit(self.main_object.sprites[3 - len(player.notices)], (450, 0))
 
