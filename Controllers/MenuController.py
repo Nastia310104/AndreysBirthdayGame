@@ -39,14 +39,21 @@ def setMenu(window, clock, mode="pause"):
                 if menu.start_button.checkClick():
                     return True
                 elif menu.quit_button.checkClick():
-                    pygame.quit()
-                    quit()
+                    menuMode = "exit"
             case "death":
                 window.fill((35, 47, 75))
                 menu.drawDeathMenu(window)
                 if menu.yes_button.checkClick():
                     return
                 elif menu.no_button.checkClick():
+                # TODO: add level reset
                     menuMode = "start"
-            # TODO: add level reset
+            case "level_complete":
+                window.fill((35, 47, 75))
+                menu.drawLevelCompleteMenu(window)
+                if menu.restart_button.checkClick():
+                    return
+                elif menu.quit_button.checkClick():
+                    menuMode = "exit"
+
         pygame.display.update()
