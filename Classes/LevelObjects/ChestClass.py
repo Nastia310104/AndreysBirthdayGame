@@ -2,7 +2,7 @@ from Classes.ObjectClass import Object, Sound, pygame
 from Classes.LevelObjects.GunClass import Gun, GUN_GROUP
 from Classes.LevelObjects.ScrewdriverClass import Screwdriver, SCREWDRIVER_GROUP
 
-OBJECT_PATH = 'Assets/LevelObjects/Object_1.png'
+OBJECT_PATH = 'Assets/LevelObjects/Chest.png'
 WIDTH, HEIGHT = 32, 32
 
 CHEST_GROUP = pygame.sprite.Group()

@@ -14,6 +14,7 @@ from Classes.EnemyClass import ENEMY_GROUP
 from Classes.LevelObjects.BulletClass import BULLET_GROUP
 from Classes.WindowObjects.PortraitClass import Portrait
 from Classes.WindowObjects.BackgroundClass import Background
+from Classes.GUIObjects.PopUpClass import PopUp
 
 screen_info = tkinter.Tk()
  
@@ -25,7 +26,7 @@ LEVEL_1_TEST_MAPS = ['Levels/Level_1/test_level_1_mainMap.csv', 'Levels/Level_1/
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
-def draw(window, player, map, camera, portrait, background):
+def draw(window, player, map, camera, portrait, background, popup):
     background.parallax_background(window, camera.offset.x)
     map.drawMap(window, camera)
     
@@ -36,6 +37,7 @@ def draw(window, player, map, camera, portrait, background):
         
     portrait.draw(window, player)
     player.draw(window, camera)
+    popup.draw(window, player.rect.x + 60, player.rect. y - 30)
 
     pygame.display.update()
 
@@ -49,6 +51,9 @@ def main(window):
     camera.setMethod(follow)
     background = Background(WIDTH, HEIGHT)
     level_objects = map.tiles + map.objects + map.enemies
+
+    # REMOVE AFTER
+    popup = PopUp(300, 700)
 
     Sound.playBackgroungMusic()
 
@@ -73,6 +78,9 @@ def main(window):
                     Menu.setMenu(window, clock)
                     player.go_left = False
                     player.go_right = False
+
+                # if event.key == pygame.K_KP_ENTER and player.popup:
+                #     player.popup == False
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     player.go_left = True
@@ -108,7 +116,7 @@ def main(window):
         for bullet in BULLET_GROUP.sprites():
             bullet.loop(map.tiles)
 
-        draw(window, player, map, camera, portrait, background)
+        draw(window, player, map, camera, portrait, background, popup)
 
     pygame.quit()
     quit()

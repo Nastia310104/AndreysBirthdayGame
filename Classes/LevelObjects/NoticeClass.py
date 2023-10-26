@@ -1,6 +1,6 @@
 from Classes.LevelObjects.LevelObjectClass import LevelObject, pygame, Sound
 
-IMAGE_PATH = 'Assets/LevelObjects/Object_0.png'
+IMAGE_PATH = 'Assets/LevelObjects/Notice.png'
 
 NOTICE_GROUP = pygame.sprite.Group()
 
