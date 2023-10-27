@@ -7,7 +7,7 @@ def setMenu(window, level, mode="pause"):
     pygame.mouse.set_visible(True)
 
     while paused:
-        level.clock.tick(5)
+        level.clock.tick(7)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
