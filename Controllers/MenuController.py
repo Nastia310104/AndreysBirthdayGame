@@ -1,12 +1,13 @@
 from Classes.GUIObjects.MenuClass import Menu, pygame
 
-def setMenu(window, clock, mode="pause"):
+def setMenu(window, level, mode="pause"):
     paused = True
     menu = Menu()
     menuMode = mode
+    pygame.mouse.set_visible(True)
 
     while paused:
-        clock.tick(10)
+        level.clock.tick(5)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -24,7 +25,8 @@ def setMenu(window, clock, mode="pause"):
                 elif menu.quit_button.checkClick():
                     menuMode = "exit"
                 elif menu.restart_button.checkClick():
-                    return
+                    level.restartLevel()
+                    paused = False
             case "exit":
                 window.fill((35, 47, 75))
                 menu.drawExitMenu(window)
@@ -44,15 +46,16 @@ def setMenu(window, clock, mode="pause"):
                 window.fill((35, 47, 75))
                 menu.drawDeathMenu(window)
                 if menu.yes_button.checkClick():
-                    return
+                    level.restartLevel()
+                    paused = False
                 elif menu.no_button.checkClick():
-                # TODO: add level reset
                     menuMode = "start"
             case "level_complete":
                 window.fill((35, 47, 75))
                 menu.drawLevelCompleteMenu(window)
                 if menu.restart_button.checkClick():
-                    return
+                    level.restartLevel()
+                    paused = False
                 elif menu.quit_button.checkClick():
                     menuMode = "exit"
 
