@@ -1,5 +1,5 @@
 import pygame, csv, os
-from Classes.EnemyClass import Enemy
+from Classes.EnemyClass import Enemy, ENEMY_GROUP
 from Classes.MapObjects.BlockClass import Block, BLOCK_GROUP
 from Classes.MapObjects.TrapClass import Trap, TRAP_GROUP
 from Classes.MapObjects.PlatformClass import Platform, PLATFORM_GROUP
@@ -24,12 +24,13 @@ FIRST_LEVEL_CHEST_CONTENT = ['gun', 'screwdriver']
 
 class TileMap():
     def __init__(self, filenames):
+        self.filenames = filenames
         self.tile_size = 64
         self.start_x = 0
         self.start_y = 0
-        self.tiles = self.loadTiles(filenames[0])
-        self.objects = self.loadObjects(filenames[1])
-        self.enemies = self.loadNps(filenames[2])
+        self.tiles = self.loadTiles(self.filenames[0])
+        self.objects = self.loadObjects(self.filenames[1])
+        self.enemies = self.loadNps(self.filenames[2])
         self.map_surface = pygame.Surface((self.map_width, self.map_height))
         self.map_surface.set_colorkey((0, 0, 0))
         self.fillMap()
@@ -45,7 +46,8 @@ class TileMap():
                        SCREWDRIVER_GROUP.sprites() + 
                        DOOR_GROUP.sprites() + 
                        HEART_GROUP.sprites() + 
-                       PLATFORM_GROUP.sprites())
+                       PLATFORM_GROUP.sprites() + 
+                       TRAP_GROUP.sprites())
         for object in (objects):
             object.updateImage()
             window.blit(object.image, (object.rect.x - camera.offset.x, object.rect.y - camera.offset.y))
@@ -53,9 +55,13 @@ class TileMap():
         for portal in PORTAL_GROUP.sprites():
             portal.draw(window, camera)
 
+    def redrawLevel(self):
+        for sprite in (self.objects + self.enemies):
+            sprite.kill()
+        self.objects = self.loadObjects(self.filenames[1])
+        self.enemies = self.loadNps(self.filenames[2])
 
     def fillMap(self):
-        TRAP_GROUP.draw(self.map_surface)
         BLOCK_GROUP.draw(self.map_surface)
         OFFICE_GROUP.draw(self.map_surface)
 

@@ -1,5 +1,5 @@
 import pygame
-import Controllers.SpriteController as Sprite, Controllers.SoundsController as Sound, Controllers.MenuController as Menu
+import Controllers.SpriteController as Sprite, Controllers.SoundsController as Sound
 from Classes.LevelObjects.ChestClass import Chest
 from Classes.LevelObjects.GunClass import GUN_GROUP
 from Classes.LevelObjects.ScrewdriverClass import SCREWDRIVER_GROUP
@@ -24,6 +24,10 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+        self.health_bar = ChargeBar(200, 50, 80, 0, True)
+        self.setProperies()
+
+    def setProperies(self):
 # Player's statments
         self.have_gun = False
         self.have_screwdriver = False
@@ -52,8 +56,12 @@ class Player(pygame.sprite.Sprite):
         self.acceleration = pygame.math.Vector2(0,self.gravity)
 # Player's properties
         self.direction = "right"
-        self.health_bar = ChargeBar(200, 50, 80, 0, True)
-    
+
+    def playerReset(self):
+        self.setProperies()
+        self.health_bar.bar_index = 0
+        self.health_bar.updateImage()
+
     def draw(self, window, camera):
         window.blit(self.sprite, (self.rect.x - camera.offset.x, self.rect.y - camera.offset.y))
         self.health_bar.draw(window)
@@ -80,8 +88,8 @@ class Player(pygame.sprite.Sprite):
             self.dieing_count = 0
             self.go_left = False
             self.go_right = False
-        elif self.is_dieing and self.animation_count >= 42:
-            self.animation_count = 42
+        elif self.is_dieing and self.animation_count >= 41:
+            self.animation_count = 41
             self.is_dead = True
 
 ########################### Handle movement ###########################
