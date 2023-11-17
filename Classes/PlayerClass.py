@@ -17,14 +17,16 @@ PLAYER_SPRITE_PATH = "Assets/RedHood"
 class Player(pygame.sprite.Sprite):
     CHARACTER_WIDTH, CHARACTER_HEIGHT = 32, 32
     SPRITES = Sprite.loadSprites(PLAYER_SPRITE_PATH, CHARACTER_WIDTH, CHARACTER_HEIGHT, True)
-    START_POSITION_X, START_POSITION_Y = 200, 800
+    # START_POSITION_X, START_POSITION_Y = 200, 800
     ANIMATION_DELAY = 4
 
     # TODO:Mask collision
 
-    def __init__(self):
+    def __init__(self, start_x, start_y):
         pygame.sprite.Sprite.__init__(self)
         self.health_bar = ChargeBar(200, 50, 80, 0, True)
+        self.start_position_x = start_x
+        self.start_position_y = start_y
         self.setProperies()
 
     def setProperies(self):
@@ -49,8 +51,8 @@ class Player(pygame.sprite.Sprite):
         self.gears = []
         self.keys = []
 # Player's position
-        self.rect = pygame.Rect(self.START_POSITION_X, self.START_POSITION_Y, self.CHARACTER_WIDTH * 2, self.CHARACTER_HEIGHT * 2)
-        self.position = pygame.math.Vector2(self.START_POSITION_X, self.START_POSITION_Y)
+        self.rect = pygame.Rect(self.start_position_x, self.start_position_y, self.CHARACTER_WIDTH * 2, self.CHARACTER_HEIGHT * 2)
+        self.position = pygame.math.Vector2(self.start_position_x, self.start_position_y)
         self.velocity = pygame.math.Vector2(0,0)
         self.gravity, self.friction = .35, -.12
         self.acceleration = pygame.math.Vector2(0,self.gravity)

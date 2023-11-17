@@ -11,7 +11,7 @@ class Camera():
         self.offset = vector(0, 0)
         self.offset_float = vector(0, 0)
         self.display_width, self.display_height = width, height
-        self.CONST = vector(-self.player.START_POSITION_X + (player.rect.w / 2) - 400, -self.player.START_POSITION_Y + 150)
+        self.CONST = vector(-self.player.start_position_x + (player.rect.w / 2) - width // 2, -self.player.start_position_y + height // 2)
         self.map = map
 
     def setMethod(self, method):

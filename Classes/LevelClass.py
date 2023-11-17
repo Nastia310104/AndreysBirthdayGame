@@ -7,15 +7,17 @@ from Classes.WindowObjects.BackgroundClass import Background
 
 LEVEL_1_MAPS = ['Levels/Level_1/level_1_mainMap.csv', 'Levels/Level_1/level_1_mainObjects.csv', 'Levels/Level_1/level_1_enemies.csv']
 LEVEL_1_TEST_MAPS = ['Levels/Level_1/test_level_1_mainMap.csv', 'Levels/Level_1/test_level_1_mainObjects.csv', 'Levels/Level_1/level_1_enemies.csv']
+LEVEL_1_NEW_MAP = ['Levels/Level_1/level_1_map.csv', 'Levels/Level_1/level_1_Objects.csv', 'Levels/Level_1/level_1_NPS.csv']
 
 class Level():
     def __init__(self, width, height):
         self.level_number = 1
         self.clock = pygame.time.Clock()
-        self.player = Player()
 # Map
-        self.map = TileMap(LEVEL_1_TEST_MAPS)
+        self.map = TileMap(LEVEL_1_NEW_MAP)
         self.objects = self.map.tiles + self.map.objects + self.map.enemies
+# Player
+        self.player = Player(self.map.player_position.x, self.map.player_position.y)
 # Screen
         self.screen_width, self.screen_height = width, height
         self.portrait = Portrait(75, 0)

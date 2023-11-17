@@ -15,7 +15,6 @@ from Classes.LevelObjects.HeartClass import Heart, HEART_GROUP
 from Classes.LevelObjects.OfficeClass import Table, Chair, OFFICE_GROUP
 from Classes.LevelObjects.PortalClass import Portal, PORTAL_GROUP
 
-GAP = 64
 TILESET_PATH = "Assets/Tiles/"
 TILE_NAME = "Tile_"
 OBJECTS_PATH = "Assets/LevelObjects/"
@@ -84,15 +83,14 @@ class TileMap():
         for row in map:
             x = 0
             for tile in row:
-                if int(tile) == 129:
-                    block = Trap(x * self.tile_size, y * self.tile_size)
+                if int(tile) == 64:
+                    tiles.append(Trap(x * self.tile_size, y * self.tile_size))
                 elif int(tile) == 132:
                     Platform(x * self.tile_size, y * self.tile_size)
-                elif int(tile) > GAP and int(tile) <= GAP+9:
-                    block = Block((TILESET_PATH + TILE_NAME + '0' + str(int(tile) - GAP) + '.png'), x * self.tile_size, y * self.tile_size)
-                elif int(tile) > GAP + 9:
-                    block = Block((TILESET_PATH + TILE_NAME + str(int(tile) - GAP) + '.png'), x * self.tile_size, y * self.tile_size)
-                tiles.append(block)
+                elif int(tile) == 68:
+                    self.player_position = pygame.math.Vector2(x * self.tile_size, y * self.tile_size)
+                elif int(tile) >= 0:
+                    tiles.append(Block(("Assets/Tiles/Tile_" + str(int(tile) + 1) + ".png"), x * self.tile_size, y * self.tile_size))
                 x += 1
             y += 1
 
@@ -115,9 +113,9 @@ class TileMap():
                         i += 1
                     case 2: objects.append(Gear(x * self.tile_size, y * self.tile_size))
                     case 3: objects.append(Key(x * self.tile_size, y * self.tile_size))
-                    case 5: objects.append(Battery(x * self.tile_size, y * self.tile_size))
-                    case 6: Chair(x * self.tile_size, y * self.tile_size)
-                    case 7: objects.append(Table(x * self.tile_size, y * self.tile_size))
+                    case 7: objects.append(Battery(x * self.tile_size, y * self.tile_size))
+                    case 5: Chair(x * self.tile_size, y * self.tile_size)
+                    case 6: objects.append(Table(x * self.tile_size, y * self.tile_size))
                     case 8: objects.append(Door(x * self.tile_size, y * self.tile_size))
                     case 9: objects.append(Heart(x * self.tile_size, y * self.tile_size))
                     case 10: objects.append(Portal(x * self.tile_size, y * self.tile_size))
